@@ -1,48 +1,15 @@
-# StreamVault - Cinematic Movie & TV Streaming Platform
+# CineStream
 
-A premium, Netflix-inspired streaming interface powered by TMDB API.
+Premium movie & TV streaming website built with vanilla HTML/CSS/JS + TMDB API.
 
 ## Features
-
-- Movies & TV Shows via TMDB API
-- Multiple streaming servers (VidStorm, VidRock, VidPlus)
-- Continue Watching & Watch History (localStorage)
-- Responsive design with glassmorphism & neon effects
-- PWA support with offline caching
-- Cloudflare Worker API proxy included
-- Keyboard shortcuts (F for fullscreen, arrows for episode nav)
-- Theater mode
-- Search with live suggestions & infinite scroll
-
-## Pages
-
-- `index.html` - Home with trending, popular, upcoming
-- `movie.html?id={tmdb_id}` - Movie details
-- `show.html?id={tmdb_id}` - TV show details with seasons/episodes
-- `watch.html` - Video player with server switching
-- `search.html?q={query}` - Search with filters
-- `trending.html` - All trending content
-- `movies.html` - Popular movies
-- `tv.html` - Popular TV shows
-- `schedule.html` - TV airing today
-- `creator.html` - Creator profile placeholder
+- Cinematic dark UI with glassmorphism & neon effects
+- Hero slider, continue watching, schedules
+- Serverless: runs on Cloudflare Pages + Workers
+- No user accounts, all data stored locally
+- PWA ready
 
 ## Deployment
-
-### GitHub Pages
-Upload to GitHub repository and enable Pages in Settings.
-
-### Cloudflare Pages
-Deploy via Cloudflare Pages dashboard for edge caching.
-
-## API
-
-Uses TMDB API with the following endpoints:
-- Trending: `/trending/all/day`
-- Movie details: `/movie/{id}`
-- TV details: `/tv/{id}`
-- Search: `/search/multi`
-
-## License
-
-For educational purposes only.
+1. Deploy `cloudflare/worker.js` to Cloudflare Workers, route `/api/tmdb/*`.
+2. Upload all other files to Cloudflare Pages or GitHub Pages.
+3. Ensure the worker URL is accessible from the frontend (same domain or proxy).
