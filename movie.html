@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Details - StreamVault</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Movie Details">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <header class="site-header glass">
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+    <a href="index.html" class="logo">STREAMVAULT</a>
+    <div class="header-actions">
+      <button class="search-toggle" aria-label="Search">🔍</button>
+    </div>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="movies.html">Movies</a>
+      <a href="tv.html">TV Shows</a>
+      <a href="trending.html">Trending</a>
+    </nav>
+  </header>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search movies, TV shows..." autocomplete="off">
+      <button class="search-close" id="searchClose">✕</button>
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+  </div>
+
+  <main id="movieMain">
+    <div class="detail-hero" id="detailHero">
+      <div class="detail-backdrop" id="detailBackdrop"></div>
+      <div class="detail-content">
+        <div class="detail-poster" id="detailPoster"></div>
+        <div class="detail-info">
+          <h1 id="detailTitle">Loading...</h1>
+          <div class="detail-meta" id="detailMeta"></div>
+          <p class="tagline" id="detailTagline"></p>
+          <p class="overview" id="detailOverview"></p>
+          <div class="detail-genres" id="detailGenres"></div>
+          <div class="detail-actions">
+            <a href="#" class="btn btn-primary" id="watchBtn">▶ Watch Now</a>
+            <button class="btn btn-secondary" id="trailerBtn">▶ Trailer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="content-section">
+      <h2 class="section-title">Cast</h2>
+      <div class="cast-row" id="castRow"></div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">Recommendations</h2>
+      <div class="content-row" id="recommendationsRow"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>StreamVault - Cinematic Streaming Experience</p>
+  </footer>
+
+  <div class="modal" id="trailerModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="video-container" id="trailerContainer"></div>
+    </div>
+  </div>
+
+  <script type="module" src="assets/js/movie.js"></script>
+</body>
+</html>
