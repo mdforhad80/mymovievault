@@ -1,58 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CineStream — Trending</title>
-  <style>/* Full CSS */</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVerse - Trending</title>
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a28;
+            --accent: #7c3aed; --accent2: #a855f7; --text: #e2e8f0; --text2: #a0aec0;
+            --radius: 12px; --transition: 0.3s ease;
+            --font: 'Segoe UI', system-ui, sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:var(--font); }
+        .header {
+            position:sticky; top:0; background:rgba(10,10,15,0.9); backdrop-filter:blur(20px);
+            padding:12px 24px; z-index:10; border-bottom:1px solid rgba(255,255,255,0.05);
+            display:flex; align-items:center; gap:16px;
+        }
+        .logo { font-size:1.5rem; font-weight:800; background:linear-gradient(135deg,var(--accent2),var(--neon)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-decoration:none; }
+        .hero-banner {
+            width:100%; height:50vh; min-height:350px; background-size:cover; background-position:center;
+            display:flex; align-items:flex-end; padding:30px; position:relative;
+        }
+        .hero-banner::after { content:''; position:absolute; inset:0; background:linear-gradient(0deg,var(--bg) 10%, transparent 80%); }
+        .hero-text { position:relative; z-index:2; max-width:600px; }
+        .hero-text h1 { font-size:2.2rem; margin-bottom:10px; }
+        .section { padding:20px 24px; }
+        .scroll-row { display:flex; gap:14px; overflow-x:auto; padding-bottom:10px; }
+        .card {
+            flex-shrink:0; width:150px; cursor:pointer; transition:var(--transition); border-radius:var(--radius);
+            overflow:hidden; text-decoration:none; color:inherit;
+        }
+        .card img { width:100%; aspect-ratio:2/3; object-fit:cover; border-radius:var(--radius); }
+        .card:hover { transform:translateY(-5px); }
+    </style>
 </head>
 <body>
-  <!-- … same particles, overlays, navbar (with "Trending" active) … -->
-  <main class="main-content">
-    <section class="section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon-dot"></span> Trending Now</h2>
-        <div>
-          <button class="btn btn-sm btn-secondary active" id="filterAll">All</button>
-          <button class="btn btn-sm btn-secondary" id="filterMovies">Movies</button>
-          <button class="btn btn-sm btn-secondary" id="filterTV">TV Shows</button>
-        </div>
-      </div>
-      <div class="results-grid" id="trendingGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px;"></div>
-    </section>
-  </main>
-  <script type="module">
-    const API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
-    const BASE_URL = "https://api.themoviedb.org/3";
-    const IMG_W342 = "https://image.tmdb.org/t/p/w342";
-    let allResults = [];
+    <div class="header">
+        <a href="index.html" class="logo">CineVerse</a>
+        <h2 style="margin-left:auto;">🔥 Trending Now</h2>
+    </div>
+    <div class="hero-banner" id="heroBanner">
+        <div class="hero-text" id="heroText"></div>
+    </div>
+    <div class="section"><h2>Daily Trending</h2><div class="scroll-row" id="dailyTrending"></div></div>
+    <div class="section"><h2>Weekly Trending</h2><div class="scroll-row" id="weeklyTrending"></div></div>
+    <div class="section"><h2>Top Rated Movies</h2><div class="scroll-row" id="topRatedMovies"></div></div>
 
-    async function fetchTrending() { const res = await fetch(`${BASE_URL}/trending/all/day?api_key=${API_KEY}`); return res.json(); }
-    function createCard(item) { /* ... */ }
-
-    function renderFiltered(filter) {
-      const grid = document.getElementById('trendingGrid');
-      grid.innerHTML = '';
-      const filtered = allResults.filter(item => {
-        if (filter === 'movies') return item.media_type === 'movie';
-        if (filter === 'tv') return item.media_type === 'tv';
-        return true;
-      });
-      filtered.forEach(item => grid.appendChild(createCard(item)));
-    }
-
-    async function init() {
-      const data = await fetchTrending();
-      allResults = data.results.filter(item => item.poster_path);
-      renderFiltered('all');
-    }
-
-    document.getElementById('filterAll').addEventListener('click', function() { setActive(this); renderFiltered('all'); });
-    document.getElementById('filterMovies').addEventListener('click', function() { setActive(this); renderFiltered('movies'); });
-    document.getElementById('filterTV').addEventListener('click', function() { setActive(this); renderFiltered('tv'); });
-    function setActive(btn) { document.querySelectorAll('.btn-sm').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-    init();
-    // … common scripts …
-  </script>
+    <script>
+        const TMDB_API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
+        const IMG_BASE = "https://image.tmdb.org/t/p/w342";
+        async function fetchTMDB(url) {
+            const res = await fetch(`https://api.themoviedb.org/3${url}?api_key=${TMDB_API_KEY}`);
+            return res.json();
+        }
+        function renderCards(containerId, items) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = items.slice(0,20).map(item => {
+                const title = item.title || item.name;
+                const poster = item.poster_path ? `${IMG_BASE}${item.poster_path}` : '';
+                return `<a href="movie.html?id=${item.id}&type=${item.media_type||'movie'}" class="card">
+                    ${poster ? `<img src="${poster}" alt="${title}">` : '<div style="aspect-ratio:2/3;background:var(--surface3);border-radius:12px;"></div>'}
+                    <h4 style="font-size:0.8rem;margin-top:6px;">${title}</h4></a>`;
+            }).join('');
+        }
+        async function init() {
+            const daily = await fetchTMDB('/trending/all/day');
+            const weekly = await fetchTMDB('/trending/all/week');
+            const topRated = await fetchTMDB('/movie/top_rated');
+            if (weekly.results?.length) {
+                const hero = weekly.results[0];
+                document.getElementById('heroBanner').style.backgroundImage = `url(${IMG_BASE}/original${hero.backdrop_path})`;
+                document.getElementById('heroText').innerHTML = `<h1>${hero.title||hero.name}</h1><p>⭐ ${hero.vote_average?.toFixed(1)}</p>`;
+            }
+            renderCards('dailyTrending', daily.results||[]);
+            renderCards('weeklyTrending', weekly.results||[]);
+            renderCards('topRatedMovies', topRated.results||[]);
+        }
+        init();
+    </script>
 </body>
 </html>
