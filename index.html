@@ -1,276 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AnimeStream - Watch Anime Online Free</title>
-  <meta name="description" content="Watch anime online free in HD quality. Stream subbed and dubbed anime with no ads.">
-  <meta property="og:title" content="AnimeStream - Watch Anime Online Free">
-  <meta property="og:description" content="Stream thousands of anime episodes in HD quality.">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="assets/icons/favicon.ico">
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaiCrush – Anime Streaming</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#202125">
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div class="loading-screen" id="loadingScreen">
-    <div class="loading-logo">ANIME STREAM</div>
-    <div class="loading-bar">
-      <div class="loading-bar-fill"></div>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-inner">
+                <button id="menuToggle" aria-label="Toggle navigation">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                </button>
+                <a href="/" class="logo">
+                    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEgJBvjfn0ipFH7g05i8AE_qEDmqhVXzfWRXcjuYoS48lB6ZleKgURM3nHSMnczPFlxRGkwBxUo4xJe-W0ozjUXUwgC-pwcJvSWsm3PI9EunZYlSGgdnidY4Aqi5FjSxyPavgk_36BnbaX7dYWKphv9c2AhZjUyFj16ZCR_O8pIiTJM5gK195dHaOfbPnVzh=s512" alt="KaiCrush">
+                </a>
+                <div class="search-box">
+                    <form action="search.html" method="get">
+                        <input type="text" name="q" placeholder="Search anime..." autocomplete="off">
+                        <button type="submit" aria-label="Search">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="header-actions">
+                    <a href="/schedule.html" class="icon-btn" aria-label="Schedule">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+                    </a>
+                    <a href="/search.html" class="icon-btn mobile-search" aria-label="Search">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-inner">
+                <div class="nav-section">
+                    <a href="/" class="nav-link active"><span>Home</span></a>
+                    <a href="/search.html" class="nav-link"><span>Search</span></a>
+                    <a href="/schedule.html" class="nav-link"><span>Schedule</span></a>
+                    <a href="/creator.html" class="nav-link"><span>Creator</span></a>
+                </div>
+                <div class="nav-section">
+                    <h3>Genres</h3>
+                    <div class="genre-list" id="genreList"></div>
+                </div>
+                <div class="sidebar-footer">
+                    <button class="toggle-nsfw" id="nsfwToggle">NSFW</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <section class="featured-section" id="featuredSlider">
+                <div class="slider-container">
+                    <div class="slider-wrapper" id="featuredWrapper"></div>
+                    <button class="slider-prev">‹</button>
+                    <button class="slider-next">›</button>
+                </div>
+            </section>
+
+            <section class="section" id="latestReleases">
+                <div class="section-header">
+                    <h2>Latest Releases</h2>
+                    <a href="/search.html" class="view-all">View All</a>
+                </div>
+                <div class="anime-grid" id="latestGrid"></div>
+            </section>
+
+            <section class="section" id="trending">
+                <div class="section-header">
+                    <h2>Trending</h2>
+                </div>
+                <div class="anime-grid" id="trendingGrid"></div>
+            </section>
+
+            <section class="section" id="continueWatching">
+                <div class="section-header">
+                    <h2>Continue Watching</h2>
+                </div>
+                <div class="anime-grid" id="continueGrid"></div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 KaiCrush – Powered by Jikan & MyAnimeList</p>
+        </footer>
     </div>
-  </div>
 
-  <!-- Cursor Glow -->
-  <div class="cursor-glow" id="cursorGlow"></div>
-
-  <!-- Particles Canvas -->
-  <canvas id="particles-canvas"></canvas>
-
-  <!-- Header -->
-  <header class="header" id="header">
-    <div class="header-left">
-      <button class="menu-btn" id="menuBtn" aria-label="Open menu">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-      </button>
-    </div>
-    <div class="header-center">
-      <a href="index.html" class="logo">
-        <div class="logo-icon">A</div>
-        <span class="logo-text">AnimeStream</span>
-      </a>
-    </div>
-    <div class="header-right">
-      <button class="search-btn" id="searchBtn" aria-label="Search">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      </button>
-    </div>
-  </header>
-
-  <!-- Sidebar -->
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-section">Menu</div>
-    <ul class="sidebar-nav">
-      <li><a href="index.html" class="active"><span class="icon">🏠</span> Home</a></li>
-      <li><a href="search.html"><span class="icon">🔍</span> Search</a></li>
-      <li><a href="schedule.html"><span class="icon">📅</span> Schedule</a></li>
-    </ul>
-    <div class="sidebar-section">Library</div>
-    <ul class="sidebar-nav">
-      <li><a href="#continue-watching"><span class="icon">▶️</span> Continue Watching</a></li>
-      <li><a href="#watch-history"><span class="icon">📜</span> Watch History</a></li>
-    </ul>
-    <div class="sidebar-section">More</div>
-    <ul class="sidebar-nav">
-      <li><a href="creator.html"><span class="icon">👤</span> Creator</a></li>
-    </ul>
-  </nav>
-
-  <!-- Search Overlay -->
-  <div class="search-overlay" id="searchOverlay">
-    <div class="search-header">
-      <div class="search-input-wrapper">
-        <svg class="search-icon-input" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" class="search-input" id="searchInput" placeholder="Search anime..." autocomplete="off">
-      </div>
-      <button class="search-close" id="searchClose">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-    </div>
-    <div class="search-results">
-      <div class="search-suggestions" id="searchSuggestions"></div>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <main>
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-      <div class="hero-slides" id="heroSlides"></div>
-      <div class="hero-dots" id="heroDots"></div>
-    </section>
-
-    <!-- Continue Watching -->
-    <section class="section" id="continue-watching">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">▶️</span> Continue Watching</h2>
-      </div>
-      <div class="carousel-wrapper">
-        <button class="carousel-btn prev" id="continuePrev">‹</button>
-        <div class="scroll-container" id="continueContainer"></div>
-        <button class="carousel-btn next" id="continueNext">›</button>
-      </div>
-    </section>
-
-    <!-- Watch History -->
-    <section class="section" id="watch-history">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">📜</span> Watch History</h2>
-        <button class="section-link" id="clearHistory">Clear History</button>
-      </div>
-      <div class="scroll-container" id="historyContainer"></div>
-    </section>
-
-    <!-- Trending Anime -->
-    <section class="section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">🔥</span> Trending Now</h2>
-        <a href="search.html?q=&order_by=popularity" class="section-link">View All →</a>
-      </div>
-      <div class="anime-grid" id="trendingGrid"></div>
-    </section>
-
-    <!-- Popular Anime -->
-    <section class="section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">⭐</span> Popular Anime</h2>
-        <a href="search.html?q=&order_by=members" class="section-link">View All →</a>
-      </div>
-      <div class="anime-grid" id="popularGrid"></div>
-    </section>
-
-    <!-- Top Airing -->
-    <section class="section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">📡</span> Top Airing</h2>
-        <a href="search.html?q=&status=airing" class="section-link">View All →</a>
-      </div>
-      <div class="anime-grid" id="airingGrid"></div>
-    </section>
-
-    <!-- Popular Movies -->
-    <section class="section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">🎬</span> Popular Movies</h2>
-        <a href="search.html?q=&type=movie" class="section-link">View All →</a>
-      </div>
-      <div class="anime-grid" id="moviesGrid"></div>
-    </section>
-
-    <!-- Widgets Grid -->
-    <section class="section">
-      <div class="widget-grid">
-        <!-- Latest Updates -->
-        <div class="widget">
-          <div class="widget-header">
-            <h3 class="widget-title">🆕 Latest Updates</h3>
-          </div>
-          <div class="widget-body" id="latestUpdates"></div>
-        </div>
-        <!-- New Releases -->
-        <div class="widget">
-          <div class="widget-header">
-            <h3 class="widget-title">✨ New Releases</h3>
-          </div>
-          <div class="widget-body" id="newReleases"></div>
-        </div>
-        <!-- Upcoming -->
-        <div class="widget">
-          <div class="widget-header">
-            <h3 class="widget-title">⏳ Upcoming</h3>
-          </div>
-          <div class="widget-body" id="upcomingWidget"></div>
-        </div>
-        <!-- Completed -->
-        <div class="widget">
-          <div class="widget-header">
-            <h3 class="widget-title">✅ Completed</h3>
-          </div>
-          <div class="widget-body" id="completedWidget"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Recommended -->
-    <section class="section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">💡</span> Recommended For You</h2>
-        <button class="section-link" id="randomAnimeBtn">🎲 Random Anime</button>
-      </div>
-      <div class="anime-grid" id="recommendedGrid"></div>
-    </section>
-
-    <!-- Genre Highlights -->
-    <section class="section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">🎯</span> Genre Highlights</h2>
-      </div>
-      <div class="genre-list" id="genreList"></div>
-      <div class="anime-grid" id="genreAnimeGrid" style="margin-top:1.5rem"></div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-brand">AnimeStream</div>
-        <p class="footer-desc">Your premium destination for streaming anime online. Watch thousands of episodes in HD quality with sub and dub options.</p>
-      </div>
-      <div>
-        <h4 class="footer-title">Quick Links</h4>
-        <ul class="footer-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="search.html">Search</a></li>
-          <li><a href="schedule.html">Schedule</a></li>
-          <li><a href="creator.html">Creator</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="footer-title">Legal</h4>
-        <ul class="footer-links">
-          <li><a href="#">Terms of Service</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">DMCA</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="footer-title">Connect</h4>
-        <ul class="footer-links">
-          <li><a href="https://github.com" target="_blank">GitHub</a></li>
-          <li><a href="https://discord.com" target="_blank">Discord</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 AnimeStream. All rights reserved.</span>
-      <span>Powered by Jikan API</span>
-    </div>
-  </footer>
-
-  <!-- Mobile Bottom Nav -->
-  <nav class="mobile-nav">
-    <a href="index.html" class="active">
-      <span class="icon">🏠</span>
-      <span>Home</span>
-    </a>
-    <a href="search.html">
-      <span class="icon">🔍</span>
-      <span>Search</span>
-    </a>
-    <a href="schedule.html">
-      <span class="icon">📅</span>
-      <span>Schedule</span>
-    </a>
-    <a href="creator.html">
-      <span class="icon">👤</span>
-      <span>Creator</span>
-    </a>
-  </nav>
-
-  <!-- Toast Container -->
-  <div class="toast-container" id="toastContainer"></div>
-
-  <!-- Scripts -->
-  <script src="assets/js/utils.js"></script>
-  <script src="assets/js/storage.js"></script>
-  <script src="assets/js/api.js"></script>
-  <script src="assets/js/ui.js"></script>
-  <script src="assets/js/search.js"></script>
-  <script src="assets/js/app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
