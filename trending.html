@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineStream — Trending</title>
+  <style>/* Full CSS */</style>
+</head>
+<body>
+  <!-- … same particles, overlays, navbar (with "Trending" active) … -->
+  <main class="main-content">
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon-dot"></span> Trending Now</h2>
+        <div>
+          <button class="btn btn-sm btn-secondary active" id="filterAll">All</button>
+          <button class="btn btn-sm btn-secondary" id="filterMovies">Movies</button>
+          <button class="btn btn-sm btn-secondary" id="filterTV">TV Shows</button>
+        </div>
+      </div>
+      <div class="results-grid" id="trendingGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px;"></div>
+    </section>
+  </main>
+  <script type="module">
+    const API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
+    const BASE_URL = "https://api.themoviedb.org/3";
+    const IMG_W342 = "https://image.tmdb.org/t/p/w342";
+    let allResults = [];
+
+    async function fetchTrending() { const res = await fetch(`${BASE_URL}/trending/all/day?api_key=${API_KEY}`); return res.json(); }
+    function createCard(item) { /* ... */ }
+
+    function renderFiltered(filter) {
+      const grid = document.getElementById('trendingGrid');
+      grid.innerHTML = '';
+      const filtered = allResults.filter(item => {
+        if (filter === 'movies') return item.media_type === 'movie';
+        if (filter === 'tv') return item.media_type === 'tv';
+        return true;
+      });
+      filtered.forEach(item => grid.appendChild(createCard(item)));
+    }
+
+    async function init() {
+      const data = await fetchTrending();
+      allResults = data.results.filter(item => item.poster_path);
+      renderFiltered('all');
+    }
+
+    document.getElementById('filterAll').addEventListener('click', function() { setActive(this); renderFiltered('all'); });
+    document.getElementById('filterMovies').addEventListener('click', function() { setActive(this); renderFiltered('movies'); });
+    document.getElementById('filterTV').addEventListener('click', function() { setActive(this); renderFiltered('tv'); });
+    function setActive(btn) { document.querySelectorAll('.btn-sm').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+    init();
+    // … common scripts …
+  </script>
+</body>
+</html>
