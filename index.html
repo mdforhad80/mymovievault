@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CineStream – Watch Movies & TV Shows</title>
+  <title>CineStream – Watch Movies & TV Shows Online</title>
+  <meta name="description" content="Stream premium movies and TV shows for free. HD quality, no account required.">
+  <meta property="og:title" content="CineStream">
+  <meta property="og:description" content="Watch Movies & TV Shows Online">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="favicon.ico">
-  <!-- Open Graph, Twitter Cards, etc. -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
 </head>
 <body>
   <div id="app">
-    <!-- Sticky Header -->
     <header class="navbar">
       <button class="menu-btn" aria-label="Menu">☰</button>
       <div class="navbar-center">
@@ -20,28 +22,44 @@
       <button class="search-btn" aria-label="Search">🔍</button>
     </header>
 
-    <!-- Hero Slider (Swiper) -->
-    <section id="hero-slider" class="swiper">
+    <!-- Hero Swiper -->
+    <div class="swiper">
       <div class="swiper-wrapper" id="hero-slides"></div>
       <div class="swiper-pagination"></div>
-    </section>
+    </div>
 
     <!-- Continue Watching -->
-    <section id="continue-watching" class="section">
-      <h2>Continue Watching</h2>
+    <section class="section">
+      <h2 class="section-title">Continue Watching</h2>
       <div class="grid" id="continue-grid"></div>
     </section>
 
-    <!-- Trending / Popular / Upcoming etc. all generated from TMDB -->
+    <!-- Trending Now -->
+    <section class="section">
+      <h2 class="section-title">🔥 Trending Movies</h2>
+      <div class="grid" id="popular-grid"></div>
+    </section>
 
-    <!-- Search Overlay (hidden) -->
-    <div class="search-overlay" id="searchOverlay">
-      <input type="text" id="searchInput" placeholder="Search movies & TV...">
-      <div id="searchResults"></div>
-    </div>
+    <!-- Upcoming Movies -->
+    <section class="section">
+      <h2 class="section-title">📅 Upcoming Movies</h2>
+      <div class="grid" id="upcoming-grid"></div>
+    </section>
+
+    <!-- Popular TV Shows -->
+    <section class="section">
+      <h2 class="section-title">📺 Popular TV Shows</h2>
+      <div class="grid" id="tv-grid"></div>
+    </section>
   </div>
 
-  <!-- Bottom Mobile Nav -->
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <input type="text" id="searchInput" placeholder="Search movies & TV shows...">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
   <nav class="mobile-nav">
     <a href="index.html">🏠 Home</a>
     <a href="search.html">🔍 Search</a>
@@ -49,13 +67,14 @@
     <a href="creator.html">✨ Creator</a>
   </nav>
 
-  <script src="assets/js/utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="assets/js/api.js"></script>
   <script src="assets/js/storage.js"></script>
   <script src="assets/js/ui.js"></script>
-  <script src="assets/js/movie.js"></script>
   <script src="assets/js/search.js"></script>
   <script src="assets/js/player.js"></script>
+  <script src="assets/js/movie.js"></script>
+  <script src="assets/js/schedule.js"></script>
   <script src="assets/js/router.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
