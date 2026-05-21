@@ -1,7 +1,0 @@
-name = "animestream"
-main = "cloudflare/worker.js"
-compatibility_date = "2026-05-20"
-
-# Cloudflare Pages configuration
-[site]
-bucket = "."
