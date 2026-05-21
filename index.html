@@ -125,26 +125,54 @@
       background: var(--text); border-radius:2px; transition: var(--transition);
     }
 
-    /* Search */
-    .search-mini {
-      background: var(--bg-tertiary); border:1px solid var(--border);
-      border-radius: 24px; padding:8px 16px; color:var(--text);
-      font-size:0.85rem; width:180px; transition: var(--transition);
-      outline: none; font-family: var(--font-sans);
+    /* Search icon button (no text input) */
+    .search-icon-btn {
+      background: none; border: none; color: var(--text);
+      font-size: 1.3rem; cursor: pointer; padding: 8px; border-radius: 50%;
+      transition: var(--transition); display: flex; align-items: center;
+      justify-content: center; width: 40px; height: 40px;
     }
-    .search-mini:focus {
-      border-color: var(--purple); box-shadow:0 0 20px var(--purple-glow);
-      width:220px;
+    .search-icon-btn:hover { background: rgba(255,255,255,0.08); color: var(--purple); }
+    .search-icon-btn svg { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; }
+
+    /* ===== FULLSCREEN SEARCH OVERLAY ===== */
+    .search-overlay {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background: rgba(11,11,15,0.95); backdrop-filter: blur(20px);
+      z-index:3000; display: flex; align-items: center; justify-content: center;
+      opacity:0; pointer-events:none; transition: opacity 0.3s ease;
     }
-    .search-mini::placeholder { color:var(--muted); }
-    .nav-icon-btn {
-      background:none; border:none; color:var(--text);
-      font-size:1.3rem; cursor:pointer; padding:8px; border-radius:50%;
-      transition: var(--transition); display:flex; align-items:center;
-      justify-content:center; width:40px; height:40px;
+    .search-overlay.active {
+      opacity:1; pointer-events:all;
     }
-    .nav-icon-btn:hover { background:rgba(255,255,255,0.08); color:var(--purple); }
-    .nav-icon-btn svg { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; }
+    .search-overlay-content {
+      width: 100%; max-width: 700px; padding: 20px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .search-overlay-header {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .search-overlay-header h2 {
+      font-size: 1.5rem; font-weight: 700; color: var(--text);
+    }
+    .close-search-btn {
+      background: none; border: none; color: var(--text);
+      font-size: 2rem; cursor: pointer; padding: 8px 12px;
+      border-radius: var(--radius-xs); transition: var(--transition);
+      line-height: 1;
+    }
+    .close-search-btn:hover { background: rgba(255,255,255,0.08); }
+    .search-input-lg {
+      width: 100%; padding: 18px 24px; font-size: 1.2rem;
+      border-radius: 40px; border: 2px solid var(--border);
+      background: var(--bg-secondary); color: var(--text);
+      outline: none; transition: var(--transition); font-family: var(--font-sans);
+    }
+    .search-input-lg:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 30px var(--purple-glow);
+    }
+    .search-input-lg::placeholder { color: var(--muted); }
 
     /* ===== MOBILE SIDE MENU ===== */
     .side-menu-overlay {
@@ -310,7 +338,6 @@
       .hamburger { display: flex; }
       .nav-left { gap: 4px; }
       .navbar { padding: 0 16px; height:56px; }
-      .search-mini { width:130px; padding:6px 12px; font-size:0.8rem; }
       .hero-section { height:55vh; min-height:380px; padding:20px; }
       .hero-title { font-size:1.8rem; }
       .hero-description { font-size:0.85rem; -webkit-line-clamp:2; }
@@ -328,6 +355,17 @@
 </head>
 <body>
   <div class="particles-container" id="particles"></div>
+
+  <!-- FULLSCREEN SEARCH OVERLAY -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-overlay-content">
+      <div class="search-overlay-header">
+        <h2>Search Movies & TV</h2>
+        <button class="close-search-btn" id="closeSearchOverlay" aria-label="Close search">✕</button>
+      </div>
+      <input type="text" class="search-input-lg" id="searchOverlayInput" placeholder="Type a movie or show name..." autocomplete="off">
+    </div>
+  </div>
 
   <!-- Mobile side menu overlay -->
   <div class="side-menu-overlay" id="sideMenuOverlay"></div>
@@ -365,8 +403,8 @@
       <a href="index.html" class="logo">CineStream</a>
     </div>
     <div class="nav-right">
-      <input type="text" class="search-mini" id="searchMini" placeholder="Search movies & TV..." aria-label="Search">
-      <button class="nav-icon-btn" id="searchBtn" aria-label="Search" title="Search">
+      <!-- Search icon button (no text field) -->
+      <button class="search-icon-btn" id="searchIconBtn" aria-label="Open search" title="Search">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
     </div>
@@ -484,7 +522,6 @@
 
     function createCard(item, type) {
       const isMovie = type === 'movie' || item.media_type === 'movie' || item.title;
-      const itemType = isMovie ? 'movie' : 'tv';
       const watchUrl = isMovie ? `watch.html?id=${item.id}&type=movie&server=vidplus` : `watch.html?id=${item.id}&type=tv&season=1&episode=1&server=vidplus`;
       const poster = item.poster_path ? `${IMG_W342}${item.poster_path}` : 'data:image/svg+xml,...';
       const title = item.title || item.name || 'Unknown';
@@ -566,6 +603,46 @@
       }
     }
 
+    // ---------- SEARCH OVERLAY LOGIC ----------
+    const searchOverlay = document.getElementById('searchOverlay');
+    const searchOverlayInput = document.getElementById('searchOverlayInput');
+    const searchIconBtn = document.getElementById('searchIconBtn');
+    const closeSearchOverlayBtn = document.getElementById('closeSearchOverlay');
+
+    function openSearchOverlay() {
+      searchOverlay.classList.add('active');
+      searchOverlayInput.focus();
+      document.body.style.overflow = 'hidden'; // prevent background scroll
+    }
+
+    function closeSearchOverlay() {
+      searchOverlay.classList.remove('active');
+      searchOverlayInput.value = '';
+      document.body.style.overflow = '';
+    }
+
+    searchIconBtn.addEventListener('click', openSearchOverlay);
+
+    closeSearchOverlayBtn.addEventListener('click', closeSearchOverlay);
+
+    // Close overlay if clicking outside the content (on the dark background)
+    searchOverlay.addEventListener('click', (e) => {
+      if (e.target === searchOverlay) closeSearchOverlay();
+    });
+
+    // Handle pressing Enter in the overlay input
+    searchOverlayInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = searchOverlayInput.value.trim();
+        if (query) {
+          window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+        }
+      }
+      if (e.key === 'Escape') {
+        closeSearchOverlay();
+      }
+    });
+
     // Mobile menu toggle
     const hamburger = document.getElementById('hamburgerBtn');
     const sideMenu = document.getElementById('sideMenu');
@@ -585,21 +662,16 @@
       overlay.classList.remove('active');
     });
 
-    // Search
-    document.getElementById('searchMini').addEventListener('keydown', e => {
-      if (e.key==='Enter') { const q=e.target.value.trim(); if(q) window.location.href=`search.html?q=${encodeURIComponent(q)}`; }
-    });
-    document.getElementById('searchBtn').addEventListener('click', () => {
-      const q = document.getElementById('searchMini').value.trim();
-      window.location.href = q ? `search.html?q=${encodeURIComponent(q)}` : 'search.html';
-    });
-
     window.addEventListener('scroll', () => {
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY>50);
     });
-    document.addEventListener('keydown', e => {
-      if (e.key==='/' && document.activeElement?.tagName!=='INPUT' && document.activeElement?.tagName!=='TEXTAREA') {
-        e.preventDefault(); document.getElementById('searchMini').focus();
+
+    // Keyboard shortcut: '/' to open search overlay
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && !searchOverlay.classList.contains('active') &&
+          document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        openSearchOverlay();
       }
     });
 
