@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineStream – Watch Movies & TV Shows</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico">
+  <!-- Open Graph, Twitter Cards, etc. -->
+</head>
+<body>
+  <div id="app">
+    <!-- Sticky Header -->
+    <header class="navbar">
+      <button class="menu-btn" aria-label="Menu">☰</button>
+      <div class="navbar-center">
+        <span class="neon-text">Cine</span>Stream
+      </div>
+      <button class="search-btn" aria-label="Search">🔍</button>
+    </header>
+
+    <!-- Hero Slider (Swiper) -->
+    <section id="hero-slider" class="swiper">
+      <div class="swiper-wrapper" id="hero-slides"></div>
+      <div class="swiper-pagination"></div>
+    </section>
+
+    <!-- Continue Watching -->
+    <section id="continue-watching" class="section">
+      <h2>Continue Watching</h2>
+      <div class="grid" id="continue-grid"></div>
+    </section>
+
+    <!-- Trending / Popular / Upcoming etc. all generated from TMDB -->
+
+    <!-- Search Overlay (hidden) -->
+    <div class="search-overlay" id="searchOverlay">
+      <input type="text" id="searchInput" placeholder="Search movies & TV...">
+      <div id="searchResults"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Mobile Nav -->
+  <nav class="mobile-nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="search.html">🔍 Search</a>
+    <a href="schedule.html">📅 Schedule</a>
+    <a href="creator.html">✨ Creator</a>
+  </nav>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/movie.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script src="assets/js/player.js"></script>
+  <script src="assets/js/router.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
