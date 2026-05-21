@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineStream — Watch Movies & TV Shows Online</title>
     <meta name="description" content="Stream the latest movies and TV shows in cinematic quality. CineStream brings you trending content with a premium viewing experience.">
     <meta property="og:type" content="website">
@@ -88,6 +88,7 @@
             100% { transform: translateY(-10vh) scale(0.3); opacity: 0; }
         }
 
+        /* ------- NAVBAR PC VERSION ONLY (no hamburger) ------- */
         .navbar {
             position: sticky;
             top: 0;
@@ -99,7 +100,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 20px;
             height: 64px;
             transition: var(--transition);
         }
@@ -144,17 +145,19 @@
             transform: scale(1.03);
         }
 
+        /* Always visible desktop menu (PC version) */
         .nav-menu {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap; /* allows wrapping on very small screens */
         }
         .nav-menu a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
-            padding: 8px 14px;
+            padding: 6px 12px;
             border-radius: 20px;
             transition: var(--transition);
             white-space: nowrap;
@@ -169,22 +172,9 @@
             font-weight: 600;
         }
 
+        /* No mobile menu button */
         .mobile-menu-btn {
             display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 6px;
-            color: var(--text);
-        }
-        .mobile-menu-btn span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--text);
-            margin: 5px 0;
-            border-radius: 2px;
-            transition: var(--transition);
         }
 
         .search-mini {
@@ -193,8 +183,8 @@
             border-radius: 24px;
             padding: 8px 16px;
             color: var(--text);
-            font-size: 0.9rem;
-            width: 200px;
+            font-size: 0.85rem;
+            width: 180px;
             transition: var(--transition);
             outline: none;
             font-family: var(--font-sans);
@@ -202,7 +192,7 @@
         .search-mini:focus {
             border-color: var(--purple);
             box-shadow: 0 0 20px var(--purple-glow);
-            width: 240px;
+            width: 220px;
         }
         .search-mini::placeholder {
             color: var(--muted);
@@ -234,76 +224,10 @@
             stroke-width: 2;
         }
 
-        .side-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        .side-menu-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        /* Side menu completely hidden */
+        .side-menu-overlay,
         .side-menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: var(--bg-secondary);
-            z-index: 2001;
-            padding: 24px;
-            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .side-menu.active {
-            left: 0;
-        }
-        .side-menu a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-        .side-menu a:hover,
-        .side-menu a.active {
-            background: rgba(139, 92, 246, 0.15);
-            color: var(--purple);
-        }
-        .side-menu .menu-divider {
-            height: 1px;
-            background: var(--border);
-            margin: 8px 0;
-        }
-        .side-menu-close {
-            align-self: flex-end;
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: var(--radius-xs);
-            transition: var(--transition);
-        }
-        .side-menu-close:hover {
-            background: rgba(255, 255, 255, 0.08);
+            display: none;
         }
 
         .main-content {
@@ -448,11 +372,6 @@
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
-        }
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            border-radius: 20px;
         }
 
         .section {
@@ -640,20 +559,43 @@
             margin-top: 20px;
         }
 
+        /* Mobile adjustments while keeping PC version layout */
         @media (max-width: 768px) {
-            .nav-menu { display: none; }
-            .mobile-menu-btn { display: block; }
-            .navbar { padding: 0 16px; }
-            .nav-center { position: static; transform: none; margin: 0 auto; }
-            .logo { font-size: 1.5rem; }
-            .search-mini { width: 140px; }
-            .hero-section { height: 55vh; min-height: 380px; padding: 20px; }
+            .navbar {
+                padding: 0 12px;
+                height: 56px;
+            }
+            .nav-left {
+                gap: 4px;
+            }
+            .nav-menu {
+                gap: 2px;
+            }
+            .nav-menu a {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+            .search-mini {
+                width: 130px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            .hero-section {
+                height: 55vh;
+                min-height: 380px;
+                padding: 20px;
+            }
             .hero-title { font-size: 1.8rem; }
             .hero-description { font-size: 0.85rem; -webkit-line-clamp: 2; }
             .section { padding: 14px 16px; }
             .card { width: 130px; }
+            .section-title { font-size: 1.2rem; }
         }
         @media (max-width: 480px) {
+            .nav-menu a {
+                font-size: 0.7rem;
+                padding: 4px 6px;
+            }
             .card { width: 110px; }
             .hero-section { height: 45vh; min-height: 300px; }
             .hero-title { font-size: 1.4rem; }
@@ -664,19 +606,7 @@
 <body>
     <div class="particles-container" id="particles"></div>
 
-    <div class="side-menu-overlay" id="sideMenuOverlay"></div>
-    <nav class="side-menu" id="sideMenu">
-        <button class="side-menu-close" id="sideMenuClose" aria-label="Close menu">✕</button>
-        <a href="index.html" class="active">🏠 Home</a>
-        <a href="movies.html">🎬 Movies</a>
-        <a href="tv.html">📺 TV Shows</a>
-        <a href="trending.html">🔥 Trending</a>
-        <a href="schedule.html">📅 Schedule</a>
-        <div class="menu-divider"></div>
-        <a href="search.html">🔍 Search</a>
-        <a href="creator.html">👤 Creator</a>
-    </nav>
-
+    <!-- NAVBAR (PC version, no side menu) -->
     <header class="navbar" id="navbar">
         <div class="nav-left">
             <div class="nav-menu" id="desktopMenu">
@@ -686,9 +616,6 @@
                 <a href="trending.html">Trending</a>
                 <a href="schedule.html">Schedule</a>
             </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
         </div>
         <div class="nav-center">
             <a href="index.html" class="logo">CineStream</a>
@@ -773,11 +700,18 @@
             </div>
         </section>
 
+        <!-- FUTURE MOVIES (Popular films, up to 10) -->
         <section class="section">
             <div class="section-header">
-                <h2 class="section-title"><span class="icon-dot"></span> Upcoming Movies</h2>
+                <h2 class="section-title"><span class="icon-dot"></span> Future Movies</h2>
             </div>
-            <div class="card-scroll" id="upcomingScroll">
+            <div class="card-scroll" id="futureMoviesScroll">
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
                 <div class="skeleton skeleton-card"></div>
                 <div class="skeleton skeleton-card"></div>
                 <div class="skeleton skeleton-card"></div>
@@ -810,7 +744,11 @@
         async function fetchPopularMovies() { return tmdbFetch('/movie/popular'); }
         async function fetchPopularTV() { return tmdbFetch('/tv/popular'); }
         async function fetchTopRated() { return tmdbFetch('/movie/top_rated'); }
-        async function fetchUpcoming() { return tmdbFetch('/movie/upcoming'); }
+        async function fetchFutureMovies() {
+            // Using popular movies as "Future Movies" (limit 10)
+            const data = await tmdbFetch('/movie/popular');
+            return data.results.slice(0, 10);
+        }
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -923,26 +861,18 @@
                 populateScroll('popularTVScroll', popularTV.results, 'tv');
                 const topRated = await fetchTopRated();
                 populateScroll('topRatedScroll', topRated.results, 'movie');
-                const upcoming = await fetchUpcoming();
-                populateScroll('upcomingScroll', upcoming.results, 'movie');
+
+                // Future Movies: up to 10 popular films
+                const futureMovies = await fetchFutureMovies();
+                populateScroll('futureMoviesScroll', futureMovies, 'movie');
+
             } catch (err) {
                 console.error('Failed to load homepage content:', err);
                 showToast('⚠️ Failed to load some content. Please refresh.');
             }
         }
 
-        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-            document.getElementById('sideMenu').classList.add('active');
-            document.getElementById('sideMenuOverlay').classList.add('active');
-        });
-        document.getElementById('sideMenuClose').addEventListener('click', () => {
-            document.getElementById('sideMenu').classList.remove('active');
-            document.getElementById('sideMenuOverlay').classList.remove('active');
-        });
-        document.getElementById('sideMenuOverlay').addEventListener('click', () => {
-            document.getElementById('sideMenu').classList.remove('active');
-            document.getElementById('sideMenuOverlay').classList.remove('active');
-        });
+        // Search handlers
         document.getElementById('searchMini').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const q = e.target.value.trim();
@@ -973,10 +903,10 @@
 
         window.CineStream = {
             API_KEY, BASE_URL, IMG_ORIGINAL, IMG_W342,
-            tmdbFetch, fetchTrending, fetchPopularMovies, fetchPopularTV, fetchTopRated, fetchUpcoming,
+            tmdbFetch, fetchTrending, fetchPopularMovies, fetchPopularTV, fetchTopRated,
             createCard, populateScroll, showToast
         };
-        console.log('🎬 CineStream ready (no continue watching/history)');
+        console.log('🎬 CineStream PC version with Future Movies slider (10 films)');
     </script>
 
     <script>
