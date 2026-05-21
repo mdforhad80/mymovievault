@@ -562,18 +562,6 @@
       background: rgba(255, 255, 255, 0.18);
       transform: translateY(-3px);
     }
-    .btn-trailer {
-      background: rgba(0, 0, 0, 0.5);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(8px);
-      font-size: 0.85rem;
-      padding: 10px 18px;
-    }
-    .btn-trailer:hover {
-      background: rgba(0, 0, 0, 0.7);
-      transform: translateY(-2px);
-    }
 
     .slider-arrow {
       position: absolute;
@@ -644,49 +632,6 @@
     }
     .slider-dot:hover {
       background: rgba(255, 255, 255, 0.7);
-    }
-
-    .slider-volume-btn {
-      position: absolute;
-      bottom: 30px;
-      left: 60px;
-      z-index: 10;
-      background: rgba(18, 18, 24, 0.6);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fff;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      transition: var(--transition);
-    }
-    .slider-volume-btn.visible {
-      display: flex;
-    }
-    .slider-volume-btn:hover {
-      background: rgba(139, 92, 246, 0.5);
-    }
-
-    .trailer-iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-      z-index: 0;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.5s;
-    }
-    .trailer-iframe.playing {
-      opacity: 1;
-      pointer-events: all;
     }
 
     .hero-skeleton {
@@ -995,10 +940,6 @@
       .slider-dot.active {
         width: 22px;
       }
-      .slider-volume-btn {
-        bottom: 20px;
-        left: 24px;
-      }
       .hero-skeleton {
         padding: 24px;
       }
@@ -1100,7 +1041,6 @@
       </div>
     </div>
     <div class="slides-wrapper" id="slidesWrapper"></div>
-    <iframe class="trailer-iframe" id="trailerIframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     <button class="slider-arrow prev" id="sliderPrev" aria-label="Previous slide">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
@@ -1108,7 +1048,6 @@
       <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
     <div class="slider-pagination" id="sliderPagination"></div>
-    <button class="slider-volume-btn" id="sliderVolumeBtn" title="Toggle trailer" aria-label="Toggle trailer audio">🔊</button>
   </section>
 
   <main class="main-content">
@@ -1180,14 +1119,6 @@
       const data = await tmdbFetch('/movie/popular');
       return data.results.slice(0, 10);
     }
-    async function fetchMovieVideos(movieId) {
-      try {
-        const data = await tmdbFetch(`/movie/${movieId}/videos`);
-        return data.results || [];
-      } catch {
-        return [];
-      }
-    }
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -1202,9 +1133,8 @@
 
     function createCard(item, type) {
       const isMovie = type === 'movie' || item.media_type === 'movie' || item.title;
-      const watchUrl = isMovie ?
-        `watch.html?id=${item.id}&type=movie&server=vidplus` :
-        `watch.html?id=${item.id}&type=tv&season=1&episode=1&server=vidplus`;
+      // Changed: link to details page instead of watch page
+      const detailUrl = isMovie ? `movie.html?id=${item.id}` : `show.html?id=${item.id}`;
       const poster = item.poster_path ?
         `${IMG_W342}${item.poster_path}` :
         'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="342" height="513" fill="%231a1a24"><rect width="342" height="513"/></svg>';
@@ -1213,7 +1143,7 @@
       const year = (item.release_date || item.first_air_date || '').substring(0, 4);
       const card = document.createElement('a');
       card.className = 'card';
-      card.href = watchUrl;
+      card.href = detailUrl;
       card.innerHTML = `
         <img class="card-poster" src="${poster}" alt="${title}" loading="lazy" onerror="this.style.background='#1a1a24'">
         <div class="play-overlay"></div>
@@ -1258,27 +1188,18 @@
       }
     }
 
-    // ========== HERO SLIDER ==========
+    // ========== HERO SLIDER (TRAILER BUTTON REMOVED) ==========
     let currentSlide = 0;
     let slideCount = 0;
     let autoSlideInterval = null;
     let sliderMovies = [];
-    let trailerVideos = {};
-    let isTrailerPlaying = false;
-    let currentTrailerKey = null;
 
     const heroSlider = document.getElementById('heroSlider');
     const slidesWrapper = document.getElementById('slidesWrapper');
     const pagination = document.getElementById('sliderPagination');
     const prevBtn = document.getElementById('sliderPrev');
     const nextBtn = document.getElementById('sliderNext');
-    const volumeBtn = document.getElementById('sliderVolumeBtn');
-    const trailerIframe = document.getElementById('trailerIframe');
     const heroSkeleton = document.getElementById('heroSkeleton');
-
-    function getYouTubeTrailer(videos) {
-      return videos.find(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser')) || null;
-    }
 
     function buildSlideHTML(movie, index) {
       const backdrop = movie.backdrop_path ?
@@ -1293,7 +1214,7 @@
         return map[id] || '';
       }).filter(Boolean);
 
-      const watchUrl = `watch.html?id=${movie.id}&type=movie&server=vidplus`;
+      // Changed: "Watch Now" links to movie details page (since slider only has movies)
       const detailUrl = `movie.html?id=${movie.id}`;
 
       return `
@@ -1315,9 +1236,9 @@
           </div>
           <p class="slide-overview">${overview}</p>
           <div class="slide-buttons">
-            <a href="${watchUrl}" class="btn btn-primary">▶ Watch Now</a>
+            <a href="${detailUrl}" class="btn btn-primary">▶ Watch Now</a>
             <a href="${detailUrl}" class="btn btn-secondary">ℹ More Info</a>
-            <button class="btn btn-trailer" data-trailer-index="${index}" aria-label="Play trailer">🎞 Trailer</button>
+            <!-- Trailer button removed -->
           </div>
         </div>
       </div>`;
@@ -1335,20 +1256,11 @@
         dot.addEventListener('click', () => goToSlide(i));
         pagination.appendChild(dot);
       }
-      slidesWrapper.querySelectorAll('.btn-trailer').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const idx = parseInt(btn.getAttribute('data-trailer-index'));
-          toggleTrailer(idx);
-        });
-      });
       heroSkeleton.classList.add('hidden');
     }
 
     function goToSlide(index) {
       if (index === currentSlide || index < 0 || index >= slideCount) return;
-      if (isTrailerPlaying) stopTrailer();
       const allSlides = slidesWrapper.querySelectorAll('.hero-slide');
       const dots = pagination.querySelectorAll('.slider-dot');
       allSlides[currentSlide].classList.remove('active');
@@ -1369,61 +1281,12 @@
       autoSlideInterval = setInterval(nextSlide, 3000);
     }
 
-    async function toggleTrailer(index) {
-      const movie = sliderMovies[index];
-      if (!movie) return;
-      if (isTrailerPlaying) { stopTrailer(); return; }
-      if (!trailerVideos[movie.id]) {
-        trailerVideos[movie.id] = await fetchMovieVideos(movie.id);
-      }
-      const trailer = getYouTubeTrailer(trailerVideos[movie.id]);
-      if (!trailer) { showToast('No trailer available.'); return; }
-      currentTrailerKey = trailer.key;
-      trailerIframe.src = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=0&controls=0&loop=1&playlist=${trailer.key}&showinfo=0&modestbranding=1&rel=0`;
-      trailerIframe.classList.add('playing');
-      isTrailerPlaying = true;
-      volumeBtn.classList.add('visible');
-      volumeBtn.textContent = '🔊';
-      clearInterval(autoSlideInterval);
-      const activeSlide = slidesWrapper.querySelector('.hero-slide.active');
-      if (activeSlide) {
-        const content = activeSlide.querySelector('.slide-content');
-        if (content) content.style.opacity = '0.4';
-      }
-    }
-
-    function stopTrailer() {
-      trailerIframe.src = '';
-      trailerIframe.classList.remove('playing');
-      isTrailerPlaying = false;
-      currentTrailerKey = null;
-      volumeBtn.classList.remove('visible');
-      const activeSlide = slidesWrapper.querySelector('.hero-slide.active');
-      if (activeSlide) {
-        const content = activeSlide.querySelector('.slide-content');
-        if (content) content.style.opacity = '1';
-      }
-      resetAutoSlide();
-    }
-
-    volumeBtn.addEventListener('click', () => {
-      if (!isTrailerPlaying) return;
-      if (volumeBtn.textContent === '🔊') {
-        volumeBtn.textContent = '🔇';
-        if (currentTrailerKey) trailerIframe.src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${currentTrailerKey}&showinfo=0&modestbranding=1&rel=0`;
-      } else {
-        volumeBtn.textContent = '🔊';
-        if (currentTrailerKey) trailerIframe.src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&mute=0&controls=0&loop=1&playlist=${currentTrailerKey}&showinfo=0&modestbranding=1&rel=0`;
-      }
-    });
-
-    prevBtn.addEventListener('click', () => { if (isTrailerPlaying) stopTrailer(); prevSlide(); });
-    nextBtn.addEventListener('click', () => { if (isTrailerPlaying) stopTrailer(); nextSlide(); });
+    prevBtn.addEventListener('click', () => { prevSlide(); });
+    nextBtn.addEventListener('click', () => { nextSlide(); });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') { if (isTrailerPlaying) stopTrailer(); prevSlide(); }
-      else if (e.key === 'ArrowRight') { if (isTrailerPlaying) stopTrailer(); nextSlide(); }
-      else if (e.key === 'Escape') { if (isTrailerPlaying) stopTrailer(); }
+      if (e.key === 'ArrowLeft') { prevSlide(); }
+      else if (e.key === 'ArrowRight') { nextSlide(); }
     });
 
     let touchStartX = 0;
@@ -1431,7 +1294,6 @@
     heroSlider.addEventListener('touchend', (e) => {
       const diff = touchStartX - e.changedTouches[0].screenX;
       if (Math.abs(diff) > 60) {
-        if (isTrailerPlaying) stopTrailer();
         diff > 0 ? nextSlide() : prevSlide();
       }
     });
@@ -1522,7 +1384,7 @@
     });
 
     initApp();
-    console.log('🎬 CineStream — Dynamic Hero Slider Ready');
+    console.log('🎬 CineStream — Hero Slider (without Trailer)');
   </script>
 
   <script>
