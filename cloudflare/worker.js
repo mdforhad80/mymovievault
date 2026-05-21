@@ -1,39 +1,24 @@
-export default {
-  async fetch(request) {
-    const url = new URL(request.url);
-    const endpoint = url.searchParams.get("endpoint");
-    
-    if (!endpoint) {
-      return new Response(JSON.stringify({ error: "Missing endpoint parameter" }), {
-        status: 400,
-        headers: { "content-type": "application/json" }
-      });
+const TMDB_API_KEY = 'e10da2e2cbb23ea7ebfb64c3a188b64a';
+const TMDB_BASE = 'https://api.themoviedb.org/3';
+
+async function handleRequest(request) {
+  const url = new URL(request.url);
+  // Expected path: /api/tmdb/path?query...
+  const path = url.pathname.replace('/api/tmdb', '');
+  const query = url.search;
+  const apiUrl = `${TMDB_BASE}${path}${query}&api_key=${TMDB_API_KEY}`;
+
+  const response = await fetch(apiUrl, { headers: { 'User-Agent': 'CineStream' } });
+  const data = await response.json();
+  return new Response(JSON.stringify(data), {
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'public, max-age=300'
     }
-    
-    const apiKey = "e10da2e2cbb23ea7ebfb64c3a188b64a";
-    const apiUrl = `https://api.themoviedb.org/3/${endpoint}&api_key=${apiKey}`;
-    
-    try {
-      const api = await fetch(apiUrl);
-      const body = await api.text();
-      
-      return new Response(body, {
-        status: api.status,
-        headers: {
-          "content-type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type"
-        }
-      });
-    } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), {
-        status: 500,
-        headers: {
-          "content-type": "application/json",
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-    }
-  }
-};
+  });
+}
+
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request));
+});
