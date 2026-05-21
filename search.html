@@ -4,27 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CineStream — Search</title>
-  <style>/* Full CSS as movie.html */</style>
+  <!-- ... same meta and FULL CSS as movie.html ... -->
 </head>
 <body>
-  <!-- … same particles, overlays, navbar … -->
+  <!-- ... same particles, search overlay, side menu, navbar as movie.html ... -->
   <main class="main-content" style="padding: 30px 40px;">
     <input type="text" class="search-input-lg" id="searchInput" placeholder="Search movies & TV..." style="margin-bottom: 20px;">
     <div class="results-grid" id="resultsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px;"></div>
     <button class="btn btn-secondary" id="loadMoreBtn" style="margin-top: 20px; display: none;">Load More</button>
   </main>
+  <footer class="footer"><p>CineStream &copy; 2026</p></footer>
+  <div class="toast" id="toast" style="display:none;"></div>
   <script type="module">
     const API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
     const BASE_URL = "https://api.themoviedb.org/3";
     const IMG_W342 = "https://image.tmdb.org/t/p/w342";
-    let currentPage = 1, currentQuery = '';
+    let currentPage = 1;
+    let currentQuery = '';
 
     async function searchMulti(query, page = 1) {
       const res = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`);
       return res.json();
     }
 
-    function createCard(item) { /* same as before */ }
+    function createCard(item) {
+      const isMovie = item.media_type === 'movie' || item.title;
+      const type = isMovie ? 'movie' : 'tv';
+      const watchUrl = isMovie ? `watch.html?id=${item.id}&type=movie&server=vidplus` : `watch.html?id=${item.id}&type=tv&season=1&episode=1&server=vidplus`;
+      const poster = item.poster_path ? IMG_W342 + item.poster_path : 'data:image/svg+xml,...';
+      const title = item.title || item.name || 'Unknown';
+      const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+      const year = (item.release_date || item.first_air_date || '').substring(0,4);
+      const card = document.createElement('a');
+      card.className = 'card'; card.href = watchUrl;
+      card.innerHTML = `<img class="card-poster" src="${poster}" alt="${title}" loading="lazy"><div class="play-overlay"></div><div class="card-info"><div class="card-title">${title}</div><div class="card-meta">${year?`<span>${year}</span>`:''}<span class="card-rating">⭐ ${rating}</span></div></div>`;
+      return card;
+    }
 
     async function performSearch(query, page = 1, append = false) {
       if (!query) return;
@@ -40,9 +55,14 @@
 
     const searchInput = document.getElementById('searchInput');
     const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+    // Get query from URL if present
     const urlParams = new URLSearchParams(window.location.search);
     const q = urlParams.get('q');
-    if (q) { searchInput.value = q; performSearch(q); }
+    if (q) {
+      searchInput.value = q;
+      performSearch(q);
+    }
 
     searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -50,14 +70,17 @@
         if (q) {
           currentPage = 1;
           performSearch(q);
+          // Update URL
           history.pushState({}, '', `search.html?q=${encodeURIComponent(q)}`);
         }
       }
     });
+
     loadMoreBtn.addEventListener('click', () => {
       if (currentQuery) performSearch(currentQuery, currentPage + 1, true);
     });
-    // … common scripts …
+
+    // ... same navbar/search overlay/menu/particles code as movie.html ...
   </script>
 </body>
 </html>
