@@ -3,42 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search - StreamVault</title>
+  <title>CineStream – Search</title>
   <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <header class="site-header glass">
-    <button class="menu-toggle" aria-label="Menu">☰</button>
-    <a href="index.html" class="logo">STREAMVAULT</a>
-    <div class="header-actions">
-      <button class="search-toggle" aria-label="Search">🔍</button>
-    </div>
-    <nav class="main-nav">
-      <a href="index.html">Home</a>
-      <a href="movies.html">Movies</a>
-      <a href="tv.html">TV Shows</a>
-      <a href="trending.html">Trending</a>
-    </nav>
-  </header>
-
-  <main class="search-page">
-    <div class="search-hero">
-      <input type="text" id="searchInput" placeholder="Search movies, TV shows, people..." autocomplete="off" autofocus>
-      <div class="search-filters">
-        <button class="filter-btn active" data-type="all">All</button>
-        <button class="filter-btn" data-type="movie">Movies</button>
-        <button class="filter-btn" data-type="tv">TV Shows</button>
+  <header class="navbar">...</header>
+  <main>
+    <div class="search-page-container">
+      <input type="text" id="searchPageInput" placeholder="Search..." style="width:100%; padding:1rem; margin:1rem 0; background:var(--bg-secondary); border:none; border-radius:2rem; color:var(--text);">
+      <div id="searchPageResults" class="grid"></div>
+      <div id="loadMoreBtn" style="text-align:center; margin:1rem; display:none;">
+        <button class="btn outline" onclick="loadMoreSearchResults()">Load More</button>
       </div>
     </div>
-    <div class="search-results" id="searchResults"></div>
-    <div class="loading-trigger" id="loadingTrigger">Loading more...</div>
   </main>
-
-  <footer class="site-footer">
-    <p>StreamVault - Cinematic Streaming Experience</p>
-  </footer>
-
-  <script type="module" src="assets/js/search.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script>
+    let currentPage = 1;
+    let currentQuery = '';
+    async function performSearch(page=1) {
+      const q = document.getElementById('searchPageInput').value.trim();
+      if (!q) return;
+      currentQuery = q;
+      const data = await searchMulti(q, page);
+      const container = document.getElementById('searchPageResults');
+      if (page === 1) container.innerHTML = '';
+      container.innerHTML += data.results.map(r => createCard(r, r.media_type === 'tv' ? 'tv' : 'movie')).join('');
+      document.getElementById('loadMoreBtn').style.display = data.page < data.total_pages ? 'block' : 'none';
+      currentPage = page;
+    }
+    document.getElementById('searchPageInput').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') { currentPage=1; performSearch(1); }
+    });
+    function loadMoreSearchResults() { performSearch(currentPage+1); }
+  </script>
 </body>
 </html>
