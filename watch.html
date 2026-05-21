@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch - StreamVault</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body class="watch-page">
+  <header class="site-header glass minimal">
+    <a href="index.html" class="logo">STREAMVAULT</a>
+    <div class="watch-meta" id="watchMeta"></div>
+    <button class="theater-toggle" id="theaterToggle" title="Theater Mode">⛶</button>
+  </header>
+
+  <main class="watch-main">
+    <div class="player-wrapper" id="playerWrapper">
+      <iframe id="video-player" allowfullscreen loading="lazy"></iframe>
+      <div class="player-loader" id="playerLoader">
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <div class="watch-controls" id="watchControls">
+      <div class="server-selector">
+        <label>Server:</label>
+        <button class="server-btn active" data-server="vidplus">VidPlus</button>
+        <button class="server-btn" data-server="vidstorm">VidStorm</button>
+        <button class="server-btn" data-server="vidrock">VidRock</button>
+      </div>
+      
+      <div class="episode-nav" id="episodeNav" style="display:none;">
+        <button class="btn btn-secondary" id="prevEpisode">← Previous</button>
+        <select id="seasonSelect"></select>
+        <select id="episodeSelect"></select>
+        <button class="btn btn-secondary" id="nextEpisode">Next →</button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="assets/js/player.js"></script>
+</body>
+</html>
