@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CineStream — Watch</title>
+  <!-- ... same meta and FULL CSS as movie.html, plus player-specific styles ... -->
   <style>
-    /* Full CSS here (same as movie.html) plus player-specific: */
+    /* Add to existing CSS: */
     .player-container { padding: 20px 40px; max-width: 1200px; margin: 0 auto; }
     .player-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-glow); }
     .player-wrapper iframe { width: 100%; height: 100%; border: none; }
@@ -20,31 +21,63 @@
   </style>
 </head>
 <body>
-  <!-- … same particles, overlays, navbar … -->
+  <!-- ... same particles, search overlay, side menu, navbar as movie.html ... -->
   <main class="main-content">
     <div class="player-container">
       <div class="player-wrapper" id="playerWrapper">
         <iframe id="videoPlayer" allowfullscreen loading="lazy"></iframe>
       </div>
-      <div class="player-controls" id="playerControls"></div>
+      <div class="player-controls" id="playerControls">
+        <!-- dynamic content -->
+      </div>
     </div>
   </main>
+  <footer class="footer"><p>CineStream &copy; 2026</p></footer>
+  <div class="toast" id="toast" style="display:none;"></div>
   <script type="module">
     const API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
     const BASE_URL = "https://api.themoviedb.org/3";
-    // … other constants …
-    function generateMovieEmbed(tmdbId, server) { /* as in index */ }
-    function generateTVEmbed(tmdbId, season, episode, server) { /* as in index */ }
+    const IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
+    const IMG_W500 = "https://image.tmdb.org/t/p/w500";
+    const IMG_W342 = "https://image.tmdb.org/t/p/w342";
+
+    async function tmdbFetch(endpoint) {
+      const sep = endpoint.includes('?') ? '&' : '?';
+      const res = await fetch(`${BASE_URL}${endpoint}${sep}api_key=${API_KEY}`);
+      if (!res.ok) throw new Error(`TMDB error ${res.status}`);
+      return res.json();
+    }
+
+    function generateMovieEmbed(tmdbId, server) {
+      const servers = {
+        vidstorm: `https://vidstorm.ru/movie/${tmdbId}`,
+        vidrock: `https://vidrock.ru/movie/${tmdbId}`,
+        vidplus: `https://player.vidplus.to/embed/movie/${tmdbId}`,
+      };
+      return servers[server] || servers['vidplus'];
+    }
+
+    function generateTVEmbed(tmdbId, season, episode, server) {
+      const servers = {
+        vidstorm: `https://vidstorm.ru/tv/${tmdbId}/${season}/${episode}`,
+        vidrock: `https://vidrock.ru/tv/${tmdbId}/${season}/${episode}`,
+        vidplus: `https://player.vidplus.to/embed/tv/${tmdbId}/${season}/${episode}`,
+      };
+      return servers[server] || servers['vidplus'];
+    }
 
     async function init() {
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
-      const type = params.get('type');
+      const type = params.get('type'); // movie or tv
       let season = parseInt(params.get('season')) || 1;
       let episode = parseInt(params.get('episode')) || 1;
       const server = params.get('server') || 'vidplus';
 
-      if (!id || !type) { /* error handling */ }
+      if (!id || !type) {
+        document.body.innerHTML = '<p style="padding:40px;color:var(--muted)">Missing parameters.</p>';
+        return;
+      }
 
       const playerIframe = document.getElementById('videoPlayer');
       const playerWrapper = document.getElementById('playerWrapper');
@@ -58,70 +91,97 @@
         }
       }
 
+      // Build server buttons
       const servers = ['vidplus', 'vidstorm', 'vidrock'];
-      let serverHTML = servers.map(s => `<button class="server-btn ${s===server?'active':''}" data-server="${s}">${s}</button>`).join('');
+      let serverHTML = servers.map(s => `<button class="server-btn ${s===server?'active':''}" data-server="${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('');
 
       if (type === 'tv') {
+        // Fetch TV details to build season/episode selectors
         try {
           const tv = await tmdbFetch(`/tv/${id}`);
           const seasons = tv.seasons?.filter(s => s.season_number > 0) || [];
+          const totalSeasons = seasons.length;
+          // Build season dropdown and episode grid
+          let seasonOptions = seasons.map(s => `<option value="${s.season_number}" ${s.season_number===season?'selected':''}>Season ${s.season_number}</option>`).join('');
           controlsDiv.innerHTML = `
-            <select class="season-select" id="seasonSelect">${seasons.map(s => `<option value="${s.season_number}" ${s.season_number===season?'selected':''}>Season ${s.season_number}</option>`).join('')}</select>
+            <select class="season-select" id="seasonSelect">${seasonOptions}</select>
             <div style="display:flex; gap:10px; align-items:center;">
               <label style="color:var(--muted);">Episode:</label>
               <div class="episode-grid" id="episodeGrid"></div>
             </div>
             <div style="margin-left:auto; display:flex; gap:8px;">${serverHTML}</div>
           `;
+          // Load episodes for current season
           async function loadEpisodes(seasonNum) {
             const epGrid = document.getElementById('episodeGrid');
+            if (!epGrid) return;
             epGrid.innerHTML = '<span style="color:var(--muted);">Loading...</span>';
-            const seasonData = await tmdbFetch(`/tv/${id}/season/${seasonNum}`);
-            const episodes = seasonData.episodes || [];
-            epGrid.innerHTML = episodes.map(ep => `<button class="episode-btn ${ep.episode_number===episode?'active':''}" data-episode="${ep.episode_number}">${ep.episode_number}</button>`).join('');
-            epGrid.querySelectorAll('.episode-btn').forEach(btn => {
-              btn.addEventListener('click', () => {
-                episode = parseInt(btn.dataset.episode);
-                loadPlayer();
-                epGrid.querySelectorAll('.episode-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+            try {
+              const seasonData = await tmdbFetch(`/tv/${id}/season/${seasonNum}`);
+              const episodes = seasonData.episodes || [];
+              epGrid.innerHTML = episodes.map(ep => `
+                <button class="episode-btn ${ep.episode_number===episode?'active':''}" data-episode="${ep.episode_number}">${ep.episode_number}</button>
+              `).join('');
+              // Event listeners for episode buttons
+              epGrid.querySelectorAll('.episode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                  episode = parseInt(btn.dataset.episode);
+                  loadPlayer();
+                  // update active class
+                  epGrid.querySelectorAll('.episode-btn').forEach(b => b.classList.remove('active'));
+                  btn.classList.add('active');
+                });
               });
-            });
+            } catch (e) { epGrid.innerHTML = '<span style="color:var(--muted);">Error</span>'; }
           }
           loadEpisodes(season);
           document.getElementById('seasonSelect').addEventListener('change', (e) => {
             season = parseInt(e.target.value);
-            episode = 1;
+            episode = 1; // reset to first episode
             loadPlayer();
             loadEpisodes(season);
           });
-        } catch (e) { /* fallback */ }
+        } catch (e) {
+          controlsDiv.innerHTML = `<span style="color:var(--muted);">TV data unavailable.</span> ${serverHTML}`;
+        }
       } else {
-        controlsDiv.innerHTML = `<div style="flex:1;"></div><div style="display:flex; gap:8px;">${serverHTML}</div>`;
+        controlsDiv.innerHTML = `
+          <div style="flex:1;"></div>
+          <div style="display:flex; gap:8px;">${serverHTML}</div>
+        `;
       }
 
+      // Server switch buttons
       controlsDiv.addEventListener('click', (e) => {
         if (e.target.classList.contains('server-btn')) {
           const newServer = e.target.dataset.server;
           controlsDiv.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
           e.target.classList.add('active');
-          if (type === 'movie') playerIframe.src = generateMovieEmbed(id, newServer);
-          else playerIframe.src = generateTVEmbed(id, season, episode, newServer);
+          if (type === 'movie') {
+            playerIframe.src = generateMovieEmbed(id, newServer);
+          } else {
+            playerIframe.src = generateTVEmbed(id, season, episode, newServer);
+          }
         }
       });
 
       loadPlayer();
 
-      // Keyboard shortcuts for theater mode and fullscreen
+      // Theater mode toggle with 't' key
       document.addEventListener('keydown', (e) => {
-        if (e.key === 't') playerWrapper.classList.toggle('theater-mode');
-        else if (e.key === 'f') {
-          if (playerIframe.requestFullscreen) playerIframe.requestFullscreen();
-          else if (playerIframe.webkitRequestFullscreen) playerIframe.webkitRequestFullscreen();
+        if (e.key === 't') {
+          playerWrapper.classList.toggle('theater-mode');
+        } else if (e.key === 'f') {
+          if (playerIframe.requestFullscreen) {
+            playerIframe.requestFullscreen();
+          } else if (playerIframe.webkitRequestFullscreen) {
+            playerIframe.webkitRequestFullscreen();
+          }
         }
       });
     }
-    // … common navbar, particles, search overlay scripts …
+
+    // ... same navbar/search/menu/particles code as movie.html ...
     init();
   </script>
 </body>
