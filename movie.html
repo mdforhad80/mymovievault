@@ -215,7 +215,7 @@
 
     function createCard(item, type) {
       const isMovie = type === 'movie' || item.title;
-      const watchUrl = isMovie ? `watch.html?id=${item.id}&type=movie&server=vidplus` : `watch.html?id=${item.id}&type=tv&season=1&episode=1&server=vidplus`;
+      const watchUrl = isMovie ? `watch.html?id=${item.id}&type=movie&server=vidplus` : `movie.html?id=${item.id}`;
       const poster = item.poster_path ? IMG_W342 + item.poster_path : 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="342" height="513" fill="%231a1a24"><rect width="342" height="513"/></svg>';
       const title = item.title || item.name || 'Unknown';
       const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
