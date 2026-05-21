@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anime Details - AnimeStream</title>
+  <meta name="description" content="Watch anime details, episodes, and stream online free.">
+  <meta property="og:title" content="Anime Details - AnimeStream">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/icons/favicon.ico">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">ANIME STREAM</div>
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  </div>
+
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <canvas id="particles-canvas"></canvas>
+
+  <header class="header" id="header">
+    <div class="header-left">
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="header-center">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">A</div>
+        <span class="logo-text">AnimeStream</span>
+      </a>
+    </div>
+    <div class="header-right">
+      <button class="search-btn" id="searchBtn" aria-label="Search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-section">Menu</div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><span class="icon">🏠</span> Home</a></li>
+      <li><a href="search.html"><span class="icon">🔍</span> Search</a></li>
+      <li><a href="schedule.html"><span class="icon">📅</span> Schedule</a></li>
+    </ul>
+    <div class="sidebar-section">Library</div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html#continue-watching"><span class="icon">▶️</span> Continue Watching</a></li>
+      <li><a href="index.html#watch-history"><span class="icon">📜</span> Watch History</a></li>
+    </ul>
+    <div class="sidebar-section">More</div>
+    <ul class="sidebar-nav">
+      <li><a href="creator.html"><span class="icon">👤</span> Creator</a></li>
+    </ul>
+  </nav>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-header">
+      <div class="search-input-wrapper">
+        <svg class="search-icon-input" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search anime..." autocomplete="off">
+      </div>
+      <button class="search-close" id="searchClose">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="search-results">
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+  </div>
+
+  <main>
+    <div class="anime-hero" id="animeHero">
+      <div class="anime-hero-bg" id="animeHeroBg"></div>
+      <div class="anime-hero-content">
+        <div class="anime-poster-large" id="animePoster">
+          <img src="" alt="Anime Poster" id="animePosterImg">
+        </div>
+        <div class="anime-info-main">
+          <h1 class="anime-title-large" id="animeTitle">Loading...</h1>
+          <p class="anime-alt-title" id="animeAltTitle"></p>
+          <div class="anime-meta-large" id="animeMeta"></div>
+          <p class="anime-desc-large" id="animeDesc"></p>
+          <div class="anime-actions" id="animeActions"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <div class="details-main">
+        <div class="details-section">
+          <h3 class="details-section-title">🎬 Episodes</h3>
+          <div class="type-switch" id="typeSwitch">
+            <button class="active" data-type="sub">Sub</button>
+            <button data-type="dub">Dub</button>
+          </div>
+          <div class="server-selector" id="serverSelector">
+            <button class="server-btn active" data-server="vidcloud">VidCloud</button>
+          </div>
+          <div class="episode-list" id="episodeList"></div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title">🎭 Characters</h3>
+          <div class="anime-grid" id="charactersGrid"></div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title">🔗 Related Anime</h3>
+          <div class="anime-grid" id="relatedGrid"></div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title">💡 Recommendations</h3>
+          <div class="anime-grid" id="recommendationsGrid"></div>
+        </div>
+      </div>
+
+      <div class="details-sidebar">
+        <div class="details-section">
+          <h3 class="details-section-title">ℹ️ Information</h3>
+          <ul class="details-info-list" id="animeInfoList"></ul>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title">🏷️ Genres</h3>
+          <div class="genre-list" id="genreList"></div>
+        </div>
+
+        <div class="details-section">
+          <h3 class="details-section-title">🎞️ Trailer</h3>
+          <div id="trailerContainer"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">AnimeStream</div>
+        <p class="footer-desc">Your premium destination for streaming anime online.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="schedule.html">Schedule</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Connect</h4>
+        <ul class="footer-links">
+          <li><a href="https://github.com" target="_blank">GitHub</a></li>
+          <li><a href="https://discord.com" target="_blank">Discord</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AnimeStream. All rights reserved.</span>
+      <span>Powered by Jikan API</span>
+    </div>
+  </footer>
+
+  <nav class="mobile-nav">
+    <a href="index.html"><span class="icon">🏠</span><span>Home</span></a>
+    <a href="search.html"><span class="icon">🔍</span><span>Search</span></a>
+    <a href="schedule.html"><span class="icon">📅</span><span>Schedule</span></a>
+    <a href="creator.html"><span class="icon">👤</span><span>Creator</span></a>
+  </nav>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script src="assets/js/anime.js"></script>
+</body>
+</html>
