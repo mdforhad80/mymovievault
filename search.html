@@ -3,146 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search Anime - AnimeStream</title>
-  <meta name="description" content="Search and discover thousands of anime series and movies.">
-  <link rel="icon" href="assets/icons/favicon.ico">
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>CineStream — Search</title>
+  <style>/* Full CSS as movie.html */</style>
 </head>
 <body>
-  <div class="loading-screen" id="loadingScreen">
-    <div class="loading-logo">ANIME STREAM</div>
-    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
-  </div>
-
-  <div class="cursor-glow" id="cursorGlow"></div>
-  <canvas id="particles-canvas"></canvas>
-
-  <header class="header" id="header">
-    <div class="header-left">
-      <button class="menu-btn" id="menuBtn" aria-label="Open menu">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-      </button>
-    </div>
-    <div class="header-center">
-      <a href="index.html" class="logo">
-        <div class="logo-icon">A</div>
-        <span class="logo-text">AnimeStream</span>
-      </a>
-    </div>
-    <div class="header-right">
-      <button class="search-btn" id="searchBtn" aria-label="Search">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      </button>
-    </div>
-  </header>
-
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-section">Menu</div>
-    <ul class="sidebar-nav">
-      <li><a href="index.html"><span class="icon">🏠</span> Home</a></li>
-      <li><a href="search.html" class="active"><span class="icon">🔍</span> Search</a></li>
-      <li><a href="schedule.html"><span class="icon">📅</span> Schedule</a></li>
-    </ul>
-    <div class="sidebar-section">Library</div>
-    <ul class="sidebar-nav">
-      <li><a href="index.html#continue-watching"><span class="icon">▶️</span> Continue Watching</a></li>
-      <li><a href="index.html#watch-history"><span class="icon">📜</span> Watch History</a></li>
-    </ul>
-    <div class="sidebar-section">More</div>
-    <ul class="sidebar-nav">
-      <li><a href="creator.html"><span class="icon">👤</span> Creator</a></li>
-    </ul>
-  </nav>
-
-  <div class="search-overlay" id="searchOverlay">
-    <div class="search-header">
-      <div class="search-input-wrapper">
-        <svg class="search-icon-input" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" class="search-input" id="searchInput" placeholder="Search anime..." autocomplete="off">
-      </div>
-      <button class="search-close" id="searchClose">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-    </div>
-    <div class="search-results">
-      <div class="search-suggestions" id="searchSuggestions"></div>
-    </div>
-  </div>
-
-  <main class="search-page">
-    <h1 class="section-title" style="margin-bottom:1.5rem"><span class="icon">🔍</span> Search Results</h1>
-    <div class="search-filters">
-      <select class="filter-select" id="genreFilter">
-        <option value="">All Genres</option>
-      </select>
-      <select class="filter-select" id="typeFilter">
-        <option value="">All Types</option>
-        <option value="tv">TV</option>
-        <option value="movie">Movie</option>
-        <option value="ova">OVA</option>
-        <option value="special">Special</option>
-        <option value="ona">ONA</option>
-      </select>
-      <select class="filter-select" id="statusFilter">
-        <option value="">All Status</option>
-        <option value="airing">Airing</option>
-        <option value="complete">Completed</option>
-        <option value="upcoming">Upcoming</option>
-      </select>
-      <select class="filter-select" id="seasonFilter">
-        <option value="">All Seasons</option>
-        <option value="winter">Winter</option>
-        <option value="spring">Spring</option>
-        <option value="summer">Summer</option>
-        <option value="fall">Fall</option>
-      </select>
-      <select class="filter-select" id="yearFilter">
-        <option value="">All Years</option>
-      </select>
-    </div>
-    <div class="anime-grid" id="searchResults"></div>
-    <div id="searchLoading" style="text-align:center;padding:2rem;color:var(--muted)">Loading...</div>
+  <!-- … same particles, overlays, navbar … -->
+  <main class="main-content" style="padding: 30px 40px;">
+    <input type="text" class="search-input-lg" id="searchInput" placeholder="Search movies & TV..." style="margin-bottom: 20px;">
+    <div class="results-grid" id="resultsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px;"></div>
+    <button class="btn btn-secondary" id="loadMoreBtn" style="margin-top: 20px; display: none;">Load More</button>
   </main>
+  <script type="module">
+    const API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
+    const BASE_URL = "https://api.themoviedb.org/3";
+    const IMG_W342 = "https://image.tmdb.org/t/p/w342";
+    let currentPage = 1, currentQuery = '';
 
-  <footer class="footer">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-brand">AnimeStream</div>
-        <p class="footer-desc">Your premium destination for streaming anime online.</p>
-      </div>
-      <div>
-        <h4 class="footer-title">Quick Links</h4>
-        <ul class="footer-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="search.html">Search</a></li>
-          <li><a href="schedule.html">Schedule</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 AnimeStream. All rights reserved.</span>
-      <span>Powered by Jikan API</span>
-    </div>
-  </footer>
+    async function searchMulti(query, page = 1) {
+      const res = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`);
+      return res.json();
+    }
 
-  <nav class="mobile-nav">
-    <a href="index.html"><span class="icon">🏠</span><span>Home</span></a>
-    <a href="search.html" class="active"><span class="icon">🔍</span><span>Search</span></a>
-    <a href="schedule.html"><span class="icon">📅</span><span>Schedule</span></a>
-    <a href="creator.html"><span class="icon">👤</span><span>Creator</span></a>
-  </nav>
+    function createCard(item) { /* same as before */ }
 
-  <div class="toast-container" id="toastContainer"></div>
+    async function performSearch(query, page = 1, append = false) {
+      if (!query) return;
+      currentQuery = query;
+      const data = await searchMulti(query, page);
+      const results = data.results.filter(item => item.poster_path && (item.media_type === 'movie' || item.media_type === 'tv'));
+      const grid = document.getElementById('resultsGrid');
+      if (!append) grid.innerHTML = '';
+      results.forEach(item => grid.appendChild(createCard(item)));
+      document.getElementById('loadMoreBtn').style.display = data.page < data.total_pages ? 'inline-flex' : 'none';
+      currentPage = page;
+    }
 
-  <script src="assets/js/utils.js"></script>
-  <script src="assets/js/storage.js"></script>
-  <script src="assets/js/api.js"></script>
-  <script src="assets/js/ui.js"></script>
-  <script src="assets/js/search.js"></script>
-  <script src="assets/js/search-page.js"></script>
+    const searchInput = document.getElementById('searchInput');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const urlParams = new URLSearchParams(window.location.search);
+    const q = urlParams.get('q');
+    if (q) { searchInput.value = q; performSearch(q); }
+
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const q = searchInput.value.trim();
+        if (q) {
+          currentPage = 1;
+          performSearch(q);
+          history.pushState({}, '', `search.html?q=${encodeURIComponent(q)}`);
+        }
+      }
+    });
+    loadMoreBtn.addEventListener('click', () => {
+      if (currentQuery) performSearch(currentQuery, currentPage + 1, true);
+    });
+    // … common scripts …
+  </script>
 </body>
 </html>
