@@ -2,51 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Creator - StreamVault</title>
+  <title>Creator – CineStream</title>
   <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <header class="site-header glass">
-    <button class="menu-toggle" aria-label="Menu">☰</button>
-    <a href="index.html" class="logo">STREAMVAULT</a>
-    <div class="header-actions">
-      <button class="search-toggle" aria-label="Search">🔍</button>
-    </div>
-    <nav class="main-nav">
-      <a href="index.html">Home</a>
-      <a href="movies.html">Movies</a>
-      <a href="tv.html">TV Shows</a>
-      <a href="trending.html">Trending</a>
-    </nav>
-  </header>
-
-  <div class="search-overlay" id="searchOverlay">
-    <div class="search-container">
-      <input type="text" id="searchInput" placeholder="Search movies, TV shows..." autocomplete="off">
-      <button class="search-close" id="searchClose">✕</button>
-      <div class="search-suggestions" id="searchSuggestions"></div>
-    </div>
-  </div>
-
-  <main>
-    <section class="page-header">
-      <h1>Creator Profile</h1>
-    </section>
-    <div class="creator-profile" id="creatorProfile">
-      <p>Search for a person to see their profile and filmography.</p>
-    </div>
+  <header class="navbar">...</header>
+  <main class="glass-card" style="max-width:600px; margin:4rem auto; padding:2rem; text-align:center;">
+    <h1>✨ About CineStream</h1>
+    <p>Built with ❤️ using TMDB API, Cloudflare Workers, and vanilla web tech.</p>
+    <p>Version 1.0.0</p>
+    <a href="https://github.com" target="_blank" class="btn outline">GitHub</a>
+    <a href="https://discord.gg" class="btn outline">Discord</a>
   </main>
-
-  <footer class="site-footer">
-    <p>StreamVault - Cinematic Streaming Experience</p>
-  </footer>
-
-  <script type="module">
-    import { initSearch, initHeader } from './assets/js/app.js';
-    initHeader();
-    initSearch();
-  </script>
 </body>
 </html>
