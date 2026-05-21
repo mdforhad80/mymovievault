@@ -2,17 +2,135 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Creator – CineStream</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creator - AnimeStream</title>
+  <meta name="description" content="About the creator of AnimeStream.">
+  <link rel="icon" href="assets/icons/favicon.ico">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="navbar">...</header>
-  <main class="glass-card" style="max-width:600px; margin:4rem auto; padding:2rem; text-align:center;">
-    <h1>✨ About CineStream</h1>
-    <p>Built with ❤️ using TMDB API, Cloudflare Workers, and vanilla web tech.</p>
-    <p>Version 1.0.0</p>
-    <a href="https://github.com" target="_blank" class="btn outline">GitHub</a>
-    <a href="https://discord.gg" class="btn outline">Discord</a>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">ANIME STREAM</div>
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  </div>
+
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <canvas id="particles-canvas"></canvas>
+
+  <header class="header" id="header">
+    <div class="header-left">
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="header-center">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">A</div>
+        <span class="logo-text">AnimeStream</span>
+      </a>
+    </div>
+    <div class="header-right">
+      <button class="search-btn" id="searchBtn" aria-label="Search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-section">Menu</div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><span class="icon">🏠</span> Home</a></li>
+      <li><a href="search.html"><span class="icon">🔍</span> Search</a></li>
+      <li><a href="schedule.html"><span class="icon">📅</span> Schedule</a></li>
+    </ul>
+    <div class="sidebar-section">Library</div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html#continue-watching"><span class="icon">▶️</span> Continue Watching</a></li>
+      <li><a href="index.html#watch-history"><span class="icon">📜</span> Watch History</a></li>
+    </ul>
+    <div class="sidebar-section">More</div>
+    <ul class="sidebar-nav">
+      <li><a href="creator.html" class="active"><span class="icon">👤</span> Creator</a></li>
+    </ul>
+  </nav>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-header">
+      <div class="search-input-wrapper">
+        <svg class="search-icon-input" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search anime..." autocomplete="off">
+      </div>
+      <button class="search-close" id="searchClose">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="search-results">
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+  </div>
+
+  <main class="creator-page">
+    <div class="creator-card">
+      <div class="creator-avatar">👨‍💻</div>
+      <h1 class="creator-name">AnimeStream Creator</h1>
+      <p class="creator-role">Full Stack Developer & Anime Enthusiast</p>
+      <p style="color:var(--muted);margin-bottom:2rem;font-size:0.9375rem;line-height:1.6;">
+        Passionate about building modern web experiences. This project is built with pure HTML, CSS, and JavaScript — no frameworks, no backend servers. Deployed on Cloudflare Pages for maximum performance.
+      </p>
+      <div class="creator-links">
+        <a href="https://github.com" target="_blank" class="creator-link" title="GitHub">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+        </a>
+        <a href="https://discord.com" target="_blank" class="creator-link" title="Discord">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </a>
+        <a href="https://twitter.com" target="_blank" class="creator-link" title="Twitter">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+        </a>
+      </div>
+      <div class="creator-version">Version 1.0.0 | Built with ❤️ for anime fans</div>
+    </div>
   </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">AnimeStream</div>
+        <p class="footer-desc">Your premium destination for streaming anime online.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="schedule.html">Schedule</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AnimeStream. All rights reserved.</span>
+      <span>Powered by Jikan API</span>
+    </div>
+  </footer>
+
+  <nav class="mobile-nav">
+    <a href="index.html"><span class="icon">🏠</span><span>Home</span></a>
+    <a href="search.html"><span class="icon">🔍</span><span>Search</span></a>
+    <a href="schedule.html"><span class="icon">📅</span><span>Schedule</span></a>
+    <a href="creator.html" class="active"><span class="icon">👤</span><span>Creator</span></a>
+  </nav>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script src="assets/js/app.js"></script>
 </body>
 </html>
