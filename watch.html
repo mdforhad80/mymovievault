@@ -3,42 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Watch - StreamVault</title>
+  <title>CineStream – Watch</title>
   <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="manifest" href="manifest.json">
 </head>
-<body class="watch-page">
-  <header class="site-header glass minimal">
-    <a href="index.html" class="logo">STREAMVAULT</a>
-    <div class="watch-meta" id="watchMeta"></div>
-    <button class="theater-toggle" id="theaterToggle" title="Theater Mode">⛶</button>
+<body>
+  <header class="navbar">
+    <button class="menu-btn">☰</button>
+    <div class="navbar-center"><span class="neon-text">Cine</span>Stream</div>
+    <button class="search-btn">🔍</button>
   </header>
 
-  <main class="watch-main">
-    <div class="player-wrapper" id="playerWrapper">
-      <iframe id="video-player" allowfullscreen loading="lazy"></iframe>
-      <div class="player-loader" id="playerLoader">
-        <div class="spinner"></div>
-      </div>
+  <main class="watch-page">
+    <div class="player-container">
+      <iframe id="video-iframe" allowfullscreen allow="autoplay; fullscreen" frameborder="0"></iframe>
     </div>
-
-    <div class="watch-controls" id="watchControls">
-      <div class="server-selector">
-        <label>Server:</label>
-        <button class="server-btn active" data-server="vidplus">VidPlus</button>
-        <button class="server-btn" data-server="vidstorm">VidStorm</button>
-        <button class="server-btn" data-server="vidrock">VidRock</button>
-      </div>
-      
-      <div class="episode-nav" id="episodeNav" style="display:none;">
-        <button class="btn btn-secondary" id="prevEpisode">← Previous</button>
-        <select id="seasonSelect"></select>
-        <select id="episodeSelect"></select>
-        <button class="btn btn-secondary" id="nextEpisode">Next →</button>
-      </div>
+    <div class="watch-controls">
+      <select id="server-select" class="server-select"></select>
+      <button id="next-episode-btn" class="btn small" style="display:none;">Next Episode →</button>
     </div>
+    <div id="movie-info"></div>
   </main>
 
-  <script type="module" src="assets/js/player.js"></script>
+  <div class="search-overlay" id="searchOverlay">...</div>
+  <nav class="mobile-nav">...</nav>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script src="assets/js/player.js"></script>
+  <script src="assets/js/router.js"></script>
+  <script src="assets/js/app.js"></script>
 </body>
 </html>
