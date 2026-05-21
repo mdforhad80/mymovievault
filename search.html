@@ -1,86 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CineStream — Search</title>
-  <!-- ... same meta and FULL CSS as movie.html ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVerse - Advanced Search</title>
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a28; --surface3: #222233;
+            --accent: #7c3aed; --accent2: #a855f7; --text: #e2e8f0; --text2: #a0aec0;
+            --radius: 12px; --transition: 0.3s ease;
+            --font: 'Segoe UI', system-ui, sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:var(--font); }
+        .header {
+            position:sticky; top:0; background:rgba(10,10,15,0.9); backdrop-filter:blur(20px);
+            padding:12px 24px; z-index:10; border-bottom:1px solid rgba(255,255,255,0.05);
+            display:flex; align-items:center; gap:16px;
+        }
+        .logo {
+            font-size:1.5rem; font-weight:800; background:linear-gradient(135deg,var(--accent2),var(--neon));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+            text-decoration:none;
+        }
+        .search-bar {
+            flex:1; display:flex; gap:10px; max-width:600px;
+        }
+        .search-bar input {
+            flex:1; padding:10px 18px; border-radius:50px; border:1px solid rgba(255,255,255,0.2);
+            background:var(--surface2); color:#fff; font-size:0.9rem; outline:none;
+        }
+        .search-bar input:focus { border-color:var(--accent); }
+        .filter-group {
+            display:flex; gap:10px; flex-wrap:wrap; padding:16px 24px; align-items:center;
+        }
+        select, .filter-btn {
+            background:var(--surface2); color:#fff; border:1px solid rgba(255,255,255,0.1);
+            padding:8px 14px; border-radius:20px; font-size:0.8rem; cursor:pointer;
+        }
+        .grid {
+            display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr));
+            gap:16px; padding:20px 24px;
+        }
+        .card {
+            cursor:pointer; transition:var(--transition); border-radius:var(--radius); overflow:hidden;
+            text-decoration:none; color:inherit;
+        }
+        .card img { width:100%; aspect-ratio:2/3; object-fit:cover; border-radius:var(--radius); }
+        .card:hover { transform:translateY(-5px); }
+        .card h4 { font-size:0.8rem; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .load-more {
+            text-align:center; padding:20px;
+        }
+        .load-more button {
+            background:var(--accent); color:#fff; border:none; padding:12px 30px; border-radius:50px;
+            cursor:pointer; font-weight:600;
+        }
+    </style>
 </head>
 <body>
-  <!-- ... same particles, search overlay, side menu, navbar as movie.html ... -->
-  <main class="main-content" style="padding: 30px 40px;">
-    <input type="text" class="search-input-lg" id="searchInput" placeholder="Search movies & TV..." style="margin-bottom: 20px;">
-    <div class="results-grid" id="resultsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px;"></div>
-    <button class="btn btn-secondary" id="loadMoreBtn" style="margin-top: 20px; display: none;">Load More</button>
-  </main>
-  <footer class="footer"><p>CineStream &copy; 2026</p></footer>
-  <div class="toast" id="toast" style="display:none;"></div>
-  <script type="module">
-    const API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
-    const BASE_URL = "https://api.themoviedb.org/3";
-    const IMG_W342 = "https://image.tmdb.org/t/p/w342";
-    let currentPage = 1;
-    let currentQuery = '';
+    <div class="header">
+        <a href="index.html" class="logo">CineVerse</a>
+        <div class="search-bar">
+            <input type="text" id="searchQuery" placeholder="Search movies & TV...">
+        </div>
+    </div>
+    <div class="filter-group">
+        <select id="typeFilter">
+            <option value="multi">All</option>
+            <option value="movie">Movies</option>
+            <option value="tv">TV Shows</option>
+        </select>
+        <select id="genreFilter">
+            <option value="">All Genres</option>
+            <!-- populated by JS -->
+        </select>
+        <input type="number" id="yearFilter" placeholder="Year" style="width:80px; background:var(--surface2); color:#fff; border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:8px;">
+        <select id="ratingFilter">
+            <option value="">Any Rating</option>
+            <option value="7">7+</option><option value="8">8+</option><option value="9">9+</option>
+        </select>
+        <button class="filter-btn" id="applyFilters">Apply</button>
+    </div>
+    <div class="grid" id="resultsGrid"></div>
+    <div class="load-more" id="loadMoreContainer"><button id="loadMoreBtn">Load More</button></div>
 
-    async function searchMulti(query, page = 1) {
-      const res = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`);
-      return res.json();
-    }
+    <script>
+        const TMDB_API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
+        const IMG_BASE = "https://image.tmdb.org/t/p/w342";
+        let currentPage = 1;
+        let totalPages = 1;
 
-    function createCard(item) {
-      const isMovie = item.media_type === 'movie' || item.title;
-      const type = isMovie ? 'movie' : 'tv';
-      const watchUrl = isMovie ? `watch.html?id=${item.id}&type=movie&server=vidplus` : `watch.html?id=${item.id}&type=tv&season=1&episode=1&server=vidplus`;
-      const poster = item.poster_path ? IMG_W342 + item.poster_path : 'data:image/svg+xml,...';
-      const title = item.title || item.name || 'Unknown';
-      const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
-      const year = (item.release_date || item.first_air_date || '').substring(0,4);
-      const card = document.createElement('a');
-      card.className = 'card'; card.href = watchUrl;
-      card.innerHTML = `<img class="card-poster" src="${poster}" alt="${title}" loading="lazy"><div class="play-overlay"></div><div class="card-info"><div class="card-title">${title}</div><div class="card-meta">${year?`<span>${year}</span>`:''}<span class="card-rating">⭐ ${rating}</span></div></div>`;
-      return card;
-    }
-
-    async function performSearch(query, page = 1, append = false) {
-      if (!query) return;
-      currentQuery = query;
-      const data = await searchMulti(query, page);
-      const results = data.results.filter(item => item.poster_path && (item.media_type === 'movie' || item.media_type === 'tv'));
-      const grid = document.getElementById('resultsGrid');
-      if (!append) grid.innerHTML = '';
-      results.forEach(item => grid.appendChild(createCard(item)));
-      document.getElementById('loadMoreBtn').style.display = data.page < data.total_pages ? 'inline-flex' : 'none';
-      currentPage = page;
-    }
-
-    const searchInput = document.getElementById('searchInput');
-    const loadMoreBtn = document.getElementById('loadMoreBtn');
-
-    // Get query from URL if present
-    const urlParams = new URLSearchParams(window.location.search);
-    const q = urlParams.get('q');
-    if (q) {
-      searchInput.value = q;
-      performSearch(q);
-    }
-
-    searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        const q = searchInput.value.trim();
-        if (q) {
-          currentPage = 1;
-          performSearch(q);
-          // Update URL
-          history.pushState({}, '', `search.html?q=${encodeURIComponent(q)}`);
+        async function fetchGenres() {
+            const movieGenres = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB_API_KEY}`).then(r=>r.json());
+            const tvGenres = await fetch(`https://api.themoviedb.org/3/genre/tv/list?api_key=${TMDB_API_KEY}`).then(r=>r.json());
+            const all = [...(movieGenres.genres||[]), ...(tvGenres.genres||[])];
+            const unique = [...new Map(all.map(g=>[g.id,g])).values()];
+            const select = document.getElementById('genreFilter');
+            unique.forEach(g=>{ const opt=document.createElement('option'); opt.value=g.id; opt.textContent=g.name; select.appendChild(opt); });
         }
-      }
-    });
+        fetchGenres();
 
-    loadMoreBtn.addEventListener('click', () => {
-      if (currentQuery) performSearch(currentQuery, currentPage + 1, true);
-    });
+        async function search(page=1) {
+            const query = document.getElementById('searchQuery').value.trim();
+            const type = document.getElementById('typeFilter').value;
+            const genre = document.getElementById('genreFilter').value;
+            const year = document.getElementById('yearFilter').value;
+            const rating = document.getElementById('ratingFilter').value;
+            let endpoint;
+            if (query) {
+                endpoint = `/search/${type}?query=${encodeURIComponent(query)}&page=${page}`;
+            } else {
+                if (type==='multi') endpoint = `/trending/all/week?page=${page}`;
+                else if (type==='movie') endpoint = `/discover/movie?sort_by=popularity.desc&page=${page}`;
+                else endpoint = `/discover/tv?sort_by=popularity.desc&page=${page}`;
+                if (genre) endpoint += `&with_genres=${genre}`;
+                if (year) endpoint += `&primary_release_year=${year}`;
+                if (rating) endpoint += `&vote_average.gte=${rating}`;
+            }
+            const data = await fetch(`https://api.themoviedb.org/3${endpoint}&api_key=${TMDB_API_KEY}`).then(r=>r.json());
+            totalPages = data.total_pages || 1;
+            return data.results || [];
+        }
 
-    // ... same navbar/search overlay/menu/particles code as movie.html ...
-  </script>
+        async function renderResults(append=false) {
+            const grid = document.getElementById('resultsGrid');
+            if (!append) grid.innerHTML = '';
+            const results = await search(currentPage);
+            results.forEach(item => {
+                const title = item.title || item.name;
+                const poster = item.poster_path ? `${IMG_BASE}${item.poster_path}` : '';
+                const card = document.createElement('a');
+                card.className = 'card';
+                card.href = `movie.html?id=${item.id}&type=${item.media_type || (document.getElementById('typeFilter').value==='tv'?'tv':'movie')}`;
+                card.innerHTML = `${poster ? `<img src="${poster}" alt="${title}">` : '<div style="aspect-ratio:2/3;background:var(--surface3);border-radius:12px;"></div>'}<h4>${title}</h4>`;
+                grid.appendChild(card);
+            });
+            document.getElementById('loadMoreBtn').style.display = currentPage < totalPages ? 'inline-block' : 'none';
+        }
+
+        document.getElementById('applyFilters').addEventListener('click', ()=>{
+            currentPage = 1;
+            renderResults(false);
+        });
+        document.getElementById('loadMoreBtn').addEventListener('click', ()=>{
+            currentPage++;
+            renderResults(true);
+        });
+        document.getElementById('searchQuery').addEventListener('keypress', (e)=>{
+            if(e.key==='Enter') { currentPage=1;
+                renderResults(false); }
+        });
+        // Initial load
+        renderResults(false);
+    </script>
 </body>
 </html>
