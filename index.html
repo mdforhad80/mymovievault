@@ -3,60 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CineStream – Watch Movies & TV Shows</title>
+  <title>StreamVault - Movies & TV Shows</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="StreamVault - Watch Movies & TV Shows">
+  <meta property="og:image" content="https://image.tmdb.org/t/p/original/wwemzKWzjKYJFfCeiB57q3r4Bcm.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="favicon.ico">
-  <!-- Open Graph, Twitter Cards, etc. -->
 </head>
 <body>
-  <div id="app">
-    <!-- Sticky Header -->
-    <header class="navbar">
-      <button class="menu-btn" aria-label="Menu">☰</button>
-      <div class="navbar-center">
-        <span class="neon-text">Cine</span>Stream
-      </div>
-      <button class="search-btn" aria-label="Search">🔍</button>
-    </header>
+  <header class="site-header glass">
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+    <a href="index.html" class="logo">STREAMVAULT</a>
+    <div class="header-actions">
+      <button class="search-toggle" aria-label="Search">🔍</button>
+    </div>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="movies.html">Movies</a>
+      <a href="tv.html">TV Shows</a>
+      <a href="trending.html">Trending</a>
+      <a href="schedule.html">Schedule</a>
+    </nav>
+  </header>
 
-    <!-- Hero Slider (Swiper) -->
-    <section id="hero-slider" class="swiper">
-      <div class="swiper-wrapper" id="hero-slides"></div>
-      <div class="swiper-pagination"></div>
-    </section>
-
-    <!-- Continue Watching -->
-    <section id="continue-watching" class="section">
-      <h2>Continue Watching</h2>
-      <div class="grid" id="continue-grid"></div>
-    </section>
-
-    <!-- Trending / Popular / Upcoming etc. all generated from TMDB -->
-
-    <!-- Search Overlay (hidden) -->
-    <div class="search-overlay" id="searchOverlay">
-      <input type="text" id="searchInput" placeholder="Search movies & TV...">
-      <div id="searchResults"></div>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search movies, TV shows..." autocomplete="off">
+      <button class="search-close" id="searchClose">✕</button>
+      <div class="search-suggestions" id="searchSuggestions"></div>
     </div>
   </div>
 
-  <!-- Bottom Mobile Nav -->
-  <nav class="mobile-nav">
-    <a href="index.html">🏠 Home</a>
-    <a href="search.html">🔍 Search</a>
-    <a href="schedule.html">📅 Schedule</a>
-    <a href="creator.html">✨ Creator</a>
-  </nav>
+  <main>
+    <section class="hero" id="heroSection">
+      <div class="hero-backdrop" id="heroBackdrop"></div>
+      <div class="hero-content">
+        <h1 id="heroTitle">Welcome to StreamVault</h1>
+        <p id="heroOverview">Watch the latest movies and TV shows in cinematic quality.</p>
+        <div class="hero-buttons">
+          <a href="#" class="btn btn-primary" id="heroWatch">▶ Watch Now</a>
+          <a href="#" class="btn btn-secondary" id="heroInfo">ℹ More Info</a>
+        </div>
+      </div>
+      <div class="hero-vignette"></div>
+    </section>
 
-  <script src="assets/js/utils.js"></script>
-  <script src="assets/js/api.js"></script>
-  <script src="assets/js/storage.js"></script>
-  <script src="assets/js/ui.js"></script>
-  <script src="assets/js/movie.js"></script>
-  <script src="assets/js/search.js"></script>
-  <script src="assets/js/player.js"></script>
-  <script src="assets/js/router.js"></script>
-  <script src="assets/js/app.js"></script>
+    <section class="content-section" id="continueSection" style="display:none;">
+      <h2 class="section-title">Continue Watching</h2>
+      <div class="content-row" id="continueRow"></div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">Trending Now</h2>
+      <div class="content-row" id="trendingRow"></div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">Popular Movies</h2>
+      <div class="content-row" id="popularMoviesRow"></div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">Popular TV Shows</h2>
+      <div class="content-row" id="popularTVRow"></div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">Top Rated</h2>
+      <div class="content-row" id="topRatedRow"></div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">Upcoming Movies</h2>
+      <div class="content-row" id="upcomingRow"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>StreamVault - Cinematic Streaming Experience</p>
+  </footer>
+
+  <script type="module" src="assets/js/app.js"></script>
 </body>
 </html>
