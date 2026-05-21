@@ -1,57 +1,69 @@
-// search.js – Search overlay and page logic
+// ============================================
+// SEARCH FUNCTIONALITY
+// ============================================
 
-let searchTimeout;
-function initSearchOverlay() {
-  const searchBtn = document.querySelector('.search-btn');
-  const overlay = document.getElementById('searchOverlay');
-  const input = document.getElementById('searchInput');
-  const results = document.getElementById('searchResults');
+const Search = {
+  currentQuery: '',
+  isSearching: false,
 
-  if (!searchBtn || !overlay) return;
+  init() {
+    const searchInput = document.getElementById('searchInput');
+    const searchSuggestions = document.getElementById('searchSuggestions');
 
-  searchBtn.addEventListener('click', () => {
-    overlay.classList.add('active');
-    input.focus();
-  });
+    if (!searchInput || !searchSuggestions) return;
 
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) overlay.classList.remove('active');
-  });
+    searchInput.addEventListener('input', Utils.debounce(async (e) => {
+      const query = e.target.value.trim();
+      if (query.length < 2) {
+        searchSuggestions.innerHTML = '';
+        return;
+      }
+      await this.search(query, searchSuggestions);
+    }, 400));
 
-  input.addEventListener('input', (e) => {
-    const query = e.target.value.trim();
-    if (query.length < 2) {
-      results.innerHTML = '';
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query) {
+          window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+        }
+      }
+    });
+  },
+
+  async search(query, container) {
+    if (this.isSearching) return;
+    this.isSearching = true;
+
+    try {
+      const data = await API.searchAnime(query, { limit: 8, order_by: 'popularity' });
+      this.renderSuggestions(data.data || [], container, query);
+    } catch (error) {
+      console.error('Search error:', error);
+      container.innerHTML = '<p style="color:var(--muted);text-align:center">Search failed. Please try again.</p>';
+    } finally {
+      this.isSearching = false;
+    }
+  },
+
+  renderSuggestions(animes, container, query) {
+    if (!animes.length) {
+      container.innerHTML = `<p style="color:var(--muted);text-align:center;padding:1rem">No results for "${Utils.escapeHtml(query)}"</p>`;
       return;
     }
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(async () => {
-      results.innerHTML = '<div class="spinner"></div>';
-      try {
-        const data = await searchMulti(query, 1);
-        if (data.results.length) {
-          results.innerHTML = data.results.slice(0, 8).map(item => {
-            const poster = item.poster_path 
-              ? `https://image.tmdb.org/t/p/w92${item.poster_path}` 
-              : '';
-            const title = item.title || item.name;
-            const type = item.media_type === 'tv' ? 'tv' : 'movie';
-            return `<a href="movie.html?id=${item.id}&type=${type}" class="search-item">
-              <img src="${poster}">
-              <div>
-                <strong>${title}</strong>
-                <small>${type}</small>
-              </div>
-            </a>`;
-          }).join('');
-        } else {
-          results.innerHTML = '<p>No results.</p>';
-        }
-      } catch {
-        results.innerHTML = '<p>Error.</p>';
-      }
-    }, 400);
-  });
-}
 
-// Dedicated search page (search.html) will use similar logic but with infinite scroll
+    container.innerHTML = animes.map(anime => `
+      <a href="anime.html?id=${anime.mal_id}" class="suggestion-item">
+        <img src="${anime.images?.jpg?.image_url || ''}" alt="" loading="lazy">
+        <div class="suggestion-info">
+          <h4>${Utils.escapeHtml(anime.title_english || anime.title)}</h4>
+          <p>${anime.type || 'TV'} • ${anime.episodes || '?'} eps • ⭐ ${anime.score || 'N/A'}</p>
+        </div>
+      </a>
+    `).join('');
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  Search.init();
+});
