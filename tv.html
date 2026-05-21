@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineStream — Popular TV Shows</title>
+  <meta name="description" content="Browse popular TV shows on CineStream.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CineStream — Popular TV Shows">
+  <meta name="theme-color" content="#0b0b0f">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <style>
+    /* ===== FULL CINEMATIC CSS (IDENTICAL) ===== */
+    /* ... Copy the entire CSS block from movies.html (above) ... */
+  </style>
+</head>
+<body>
+  <!-- ... Same particles, search overlay, side menu, navbar (with "TV Shows" active) ... -->
+  <main class="main-content">
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon-dot"></span> Popular TV Shows</h2>
+        <div>
+          <button class="btn btn-secondary active" id="filterAll">All</button>
+          <button class="btn btn-secondary" id="filterDrama">Drama</button>
+          <button class="btn btn-secondary" id="filterComedy">Comedy</button>
+          <button class="btn btn-secondary" id="filterSciFi">Sci-Fi</button>
+        </div>
+      </div>
+      <div class="results-grid" id="tvGrid">
+        <div class="skeleton" style="aspect-ratio:2/3;"></div>
+        <div class="skeleton" style="aspect-ratio:2/3;"></div>
+        <div class="skeleton" style="aspect-ratio:2/3;"></div>
+        <div class="skeleton" style="aspect-ratio:2/3;"></div>
+      </div>
+      <button class="btn btn-secondary" id="loadMoreBtn" style="margin-top:20px; display:none;">Load More</button>
+    </section>
+  </main>
+  <footer class="footer"><p>CineStream &copy; 2026</p></footer>
+  <div class="toast" id="toast" style="display:none;"></div>
+
+  <script type="module">
+    const API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
+    const BASE_URL = "https://api.themoviedb.org/3";
+    const IMG_W342 = "https://image.tmdb.org/t/p/w342";
+    let currentPage = 1, currentGenre = null;
+
+    async function tmdbFetch(endpoint) {
+      const res = await fetch(`${BASE_URL}${endpoint}?api_key=${API_KEY}`);
+      if (!res.ok) throw new Error('API error');
+      return res.json();
+    }
+
+    function createCard(item) {
+      const detailUrl = `show.html?id=${item.id}`;
+      const poster = item.poster_path ? IMG_W342 + item.poster_path : 'data:image/svg+xml,...';
+      const title = item.name || 'Unknown';
+      const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+      const year = (item.first_air_date || '').substring(0,4);
+      const card = document.createElement('a');
+      card.className = 'card'; card.href = detailUrl;
+      card.innerHTML = `<img class="card-poster" src="${poster}" alt="${title}" loading="lazy"><div class="play-overlay"></div><div class="card-info"><div class="card-title">${title}</div><div class="card-meta">${year?`<span>${year}</span>`:''}<span class="card-rating">⭐ ${rating}</span></div></div>`;
+      return card;
+    }
+
+    async function loadTV(page = 1, genreId = null) {
+      const endpoint = genreId ? `/discover/tv?with_genres=${genreId}&page=${page}` : `/tv/popular?page=${page}`;
+      const data = await tmdbFetch(endpoint);
+      const grid = document.getElementById('tvGrid');
+      if (page === 1) grid.innerHTML = '';
+      data.results.filter(t => t.poster_path).forEach(t => grid.appendChild(createCard(t)));
+      document.getElementById('loadMoreBtn').style.display = data.page < data.total_pages ? 'inline-flex' : 'none';
+      currentPage = page;
+    }
+
+    document.getElementById('loadMoreBtn').addEventListener('click', () => loadTV(currentPage + 1, currentGenre));
+
+    function setFilter(btn, genreId) {
+      document.querySelectorAll('.btn-secondary').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentGenre = genreId;
+      loadTV(1, genreId);
+    }
+    document.getElementById('filterAll').addEventListener('click', function() { setFilter(this, null); });
+    document.getElementById('filterDrama').addEventListener('click', function() { setFilter(this, 18); });
+    document.getElementById('filterComedy').addEventListener('click', function() { setFilter(this, 35); });
+    document.getElementById('filterSciFi').addEventListener('click', function() { setFilter(this, 10765); });
+
+    // ... Same common scripts (particles, navbar, search overlay) ...
+  </script>
+</body>
+</html>
