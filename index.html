@@ -57,7 +57,6 @@
       -webkit-user-select: none;
     }
 
-    /* Particles */
     .particles-container {
       position: fixed;
       top: 0;
@@ -98,7 +97,6 @@
       }
     }
 
-    /* ===== HEADER ===== */
     .navbar {
       position: sticky;
       top: 0;
@@ -223,7 +221,6 @@
       stroke-width: 2;
     }
 
-    /* Search Overlay */
     .search-overlay {
       position: fixed;
       top: 0;
@@ -296,7 +293,6 @@
       color: var(--muted);
     }
 
-    /* Side Menu */
     .side-menu-overlay {
       position: fixed;
       top: 0;
@@ -369,7 +365,6 @@
       background: rgba(255, 255, 255, 0.08);
     }
 
-    /* ===== HERO SLIDER ===== */
     .hero-slider {
       position: relative;
       width: 100%;
@@ -449,7 +444,6 @@
       bottom: 80px;
       left: 60px;
       max-width: 600px;
-      animation: slideContentIn 0.7s ease-out forwards;
     }
     .hero-slide.active .slide-content {
       animation: slideContentIn 0.7s ease-out 0.2s forwards;
@@ -581,7 +575,6 @@
       transform: translateY(-2px);
     }
 
-    /* Slider Navigation Arrows */
     .slider-arrow {
       position: absolute;
       top: 50%;
@@ -624,7 +617,6 @@
       stroke-width: 2.5;
     }
 
-    /* Pagination Dots */
     .slider-pagination {
       position: absolute;
       bottom: 30px;
@@ -654,7 +646,6 @@
       background: rgba(255, 255, 255, 0.7);
     }
 
-    /* Mute/Unmute Button */
     .slider-volume-btn {
       position: absolute;
       bottom: 30px;
@@ -681,7 +672,6 @@
       background: rgba(139, 92, 246, 0.5);
     }
 
-    /* Trailer iframe (hidden by default) */
     .trailer-iframe {
       position: absolute;
       top: 0;
@@ -699,7 +689,6 @@
       pointer-events: all;
     }
 
-    /* Skeleton shimmer for hero */
     .hero-skeleton {
       position: absolute;
       top: 0;
@@ -754,7 +743,6 @@
       width: 75%;
     }
 
-    /* ===== SECTIONS ===== */
     .main-content {
       position: relative;
       z-index: 1;
@@ -950,7 +938,6 @@
       margin-top: 20px;
     }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .desktop-nav {
         display: none;
@@ -1057,7 +1044,6 @@
 <body>
   <div class="particles-container" id="particles"></div>
 
-  <!-- Search Overlay -->
   <div class="search-overlay" id="searchOverlay">
     <div class="search-overlay-content">
       <div class="search-overlay-header">
@@ -1068,9 +1054,7 @@
     </div>
   </div>
 
-  <!-- Side Menu Overlay -->
   <div class="side-menu-overlay" id="sideMenuOverlay"></div>
-  <!-- Side Menu -->
   <nav class="side-menu" id="sideMenu">
     <button class="side-menu-close" id="sideMenuClose" aria-label="Close menu">✕</button>
     <a href="index.html" class="active">🏠 Home</a>
@@ -1083,7 +1067,6 @@
     <a href="creator.html">👤 Creator</a>
   </nav>
 
-  <!-- Header -->
   <header class="navbar" id="navbar">
     <div class="nav-left">
       <div class="desktop-nav">
@@ -1107,9 +1090,7 @@
     </div>
   </header>
 
-  <!-- ===== HERO SLIDER ===== -->
   <section class="hero-slider" id="heroSlider" aria-label="Trending movies slider">
-    <!-- Skeleton loading -->
     <div class="hero-skeleton" id="heroSkeleton">
       <div class="hero-skeleton-content">
         <div class="sk-line title"></div>
@@ -1118,30 +1099,19 @@
         <div class="sk-line desc2"></div>
       </div>
     </div>
-
-    <!-- Slides injected here -->
     <div class="slides-wrapper" id="slidesWrapper"></div>
-
-    <!-- Trailer iframe -->
     <iframe class="trailer-iframe" id="trailerIframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-    <!-- Navigation -->
     <button class="slider-arrow prev" id="sliderPrev" aria-label="Previous slide">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <button class="slider-arrow next" id="sliderNext" aria-label="Next slide">
       <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
-
-    <!-- Pagination -->
     <div class="slider-pagination" id="sliderPagination"></div>
-
-    <!-- Volume / Trailer toggle -->
     <button class="slider-volume-btn" id="sliderVolumeBtn" title="Toggle trailer" aria-label="Toggle trailer audio">🔊</button>
   </section>
 
   <main class="main-content">
-    <!-- TRENDING -->
     <section class="section">
       <div class="section-header">
         <h2 class="section-title"><span class="icon-dot"></span> Trending Now</h2>
@@ -1149,7 +1119,6 @@
       </div>
       <div class="card-scroll" id="trendingScroll"></div>
     </section>
-    <!-- POPULAR MOVIES -->
     <section class="section">
       <div class="section-header">
         <h2 class="section-title"><span class="icon-dot"></span> Popular Movies</h2>
@@ -1157,7 +1126,6 @@
       </div>
       <div class="card-scroll" id="popularMoviesScroll"></div>
     </section>
-    <!-- POPULAR TV -->
     <section class="section">
       <div class="section-header">
         <h2 class="section-title"><span class="icon-dot"></span> Popular TV Shows</h2>
@@ -1165,14 +1133,12 @@
       </div>
       <div class="card-scroll" id="popularTVScroll"></div>
     </section>
-    <!-- TOP RATED -->
     <section class="section">
       <div class="section-header">
         <h2 class="section-title"><span class="icon-dot"></span> Top Rated</h2>
       </div>
       <div class="card-scroll" id="topRatedScroll"></div>
     </section>
-    <!-- FUTURE MOVIES -->
     <section class="section">
       <div class="section-header">
         <h2 class="section-title"><span class="icon-dot"></span> Future Movies</h2>
@@ -1189,9 +1155,6 @@
   <div class="toast" id="toast" style="display:none;"></div>
 
   <script type="module">
-    // ============================================
-    // TMDB API
-    // ============================================
     const API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
     const BASE_URL = "https://api.themoviedb.org/3";
     const IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
@@ -1237,9 +1200,6 @@
       t._timeout = setTimeout(() => { t.style.display = 'none'; }, 2500);
     }
 
-    // ============================================
-    // CARD FACTORY
-    // ============================================
     function createCard(item, type) {
       const isMovie = type === 'movie' || item.media_type === 'movie' || item.title;
       const watchUrl = isMovie ?
@@ -1280,9 +1240,6 @@
       });
     }
 
-    // ============================================
-    // PARTICLES
-    // ============================================
     function createParticles() {
       const c = document.getElementById('particles');
       const colors = ['#8b5cf6', '#d946ef', '#a78bfa', '#c084fc', '#e879f9', '#f0abfc'];
@@ -1301,9 +1258,7 @@
       }
     }
 
-    // ============================================
-    // HERO SLIDER ENGINE
-    // ============================================
+    // ========== HERO SLIDER ==========
     let currentSlide = 0;
     let slideCount = 0;
     let autoSlideInterval = null;
@@ -1334,27 +1289,7 @@
       const year = movie.release_date ? movie.release_date.substring(0, 4) : '';
       const overview = movie.overview || 'No description available.';
       const genreNames = (movie.genre_ids || []).slice(0, 3).map(id => {
-        const map = {
-          28: 'Action',
-          12: 'Adventure',
-          16: 'Animation',
-          35: 'Comedy',
-          80: 'Crime',
-          99: 'Documentary',
-          18: 'Drama',
-          10751: 'Family',
-          14: 'Fantasy',
-          36: 'History',
-          27: 'Horror',
-          10402: 'Music',
-          9648: 'Mystery',
-          10749: 'Romance',
-          878: 'Sci-Fi',
-          10770: 'TV Movie',
-          53: 'Thriller',
-          10752: 'War',
-          37: 'Western'
-        };
+        const map = { 28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family', 14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music', 9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie', 53: 'Thriller', 10752: 'War', 37: 'Western' };
         return map[id] || '';
       }).filter(Boolean);
 
@@ -1392,7 +1327,6 @@
       sliderMovies = movies;
       slideCount = movies.length;
       slidesWrapper.innerHTML = movies.map((m, i) => buildSlideHTML(m, i)).join('');
-      // Pagination dots
       pagination.innerHTML = '';
       for (let i = 0; i < slideCount; i++) {
         const dot = document.createElement('button');
@@ -1401,7 +1335,6 @@
         dot.addEventListener('click', () => goToSlide(i));
         pagination.appendChild(dot);
       }
-      // Attach trailer button events
       slidesWrapper.querySelectorAll('.btn-trailer').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -1410,81 +1343,48 @@
           toggleTrailer(idx);
         });
       });
-      // Lazy load backdrops for non-active slides
-      const allBackdrops = slidesWrapper.querySelectorAll('.slide-backdrop');
-      allBackdrops.forEach((img, i) => {
-        if (i !== 0 && img.loading !== 'eager') {
-          img.loading = 'lazy';
-        }
-      });
       heroSkeleton.classList.add('hidden');
     }
 
     function goToSlide(index) {
       if (index === currentSlide || index < 0 || index >= slideCount) return;
-      // Stop trailer if playing
       if (isTrailerPlaying) stopTrailer();
       const allSlides = slidesWrapper.querySelectorAll('.hero-slide');
       const dots = pagination.querySelectorAll('.slider-dot');
-      // Remove active from current
       allSlides[currentSlide].classList.remove('active');
       allSlides[currentSlide].classList.add('prev');
       dots[currentSlide].classList.remove('active');
-      // Set new
       allSlides[index].classList.remove('prev');
       allSlides[index].classList.add('active');
       dots[index].classList.add('active');
-      // Preload next backdrop
-      const nextImg = allSlides[index].querySelector('.slide-backdrop');
-      if (nextImg && nextImg.loading === 'lazy') {
-        nextImg.loading = 'eager';
-      }
       currentSlide = index;
       resetAutoSlide();
     }
 
-    function nextSlide() {
-      const next = (currentSlide + 1) % slideCount;
-      goToSlide(next);
-    }
-
-    function prevSlide() {
-      const prev = (currentSlide - 1 + slideCount) % slideCount;
-      goToSlide(prev);
-    }
+    function nextSlide() { goToSlide((currentSlide + 1) % slideCount); }
+    function prevSlide() { goToSlide((currentSlide - 1 + slideCount) % slideCount); }
 
     function resetAutoSlide() {
       clearInterval(autoSlideInterval);
       autoSlideInterval = setInterval(nextSlide, 3000);
     }
 
-    // Trailer logic
     async function toggleTrailer(index) {
       const movie = sliderMovies[index];
       if (!movie) return;
-      if (isTrailerPlaying && currentTrailerKey) {
-        stopTrailer();
-        return;
-      }
-      // Fetch videos if not cached
+      if (isTrailerPlaying) { stopTrailer(); return; }
       if (!trailerVideos[movie.id]) {
-        const videos = await fetchMovieVideos(movie.id);
-        trailerVideos[movie.id] = videos;
+        trailerVideos[movie.id] = await fetchMovieVideos(movie.id);
       }
       const trailer = getYouTubeTrailer(trailerVideos[movie.id]);
-      if (!trailer) {
-        showToast('No trailer available for this movie.');
-        return;
-      }
+      if (!trailer) { showToast('No trailer available.'); return; }
       currentTrailerKey = trailer.key;
       trailerIframe.src = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=0&controls=0&loop=1&playlist=${trailer.key}&showinfo=0&modestbranding=1&rel=0`;
       trailerIframe.classList.add('playing');
       isTrailerPlaying = true;
       volumeBtn.classList.add('visible');
       volumeBtn.textContent = '🔊';
-      // Pause auto-slide while trailer plays
       clearInterval(autoSlideInterval);
-      // Hide slide content partially
       const activeSlide = slidesWrapper.querySelector('.hero-slide.active');
       if (activeSlide) {
         const content = activeSlide.querySelector('.slide-content');
@@ -1508,66 +1408,38 @@
 
     volumeBtn.addEventListener('click', () => {
       if (!isTrailerPlaying) return;
-      // Toggle mute by changing src slightly
       if (volumeBtn.textContent === '🔊') {
         volumeBtn.textContent = '🔇';
-        if (currentTrailerKey) {
-          trailerIframe.src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${currentTrailerKey}&showinfo=0&modestbranding=1&rel=0`;
-        }
+        if (currentTrailerKey) trailerIframe.src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${currentTrailerKey}&showinfo=0&modestbranding=1&rel=0`;
       } else {
         volumeBtn.textContent = '🔊';
-        if (currentTrailerKey) {
-          trailerIframe.src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&mute=0&controls=0&loop=1&playlist=${currentTrailerKey}&showinfo=0&modestbranding=1&rel=0`;
-        }
+        if (currentTrailerKey) trailerIframe.src = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&mute=0&controls=0&loop=1&playlist=${currentTrailerKey}&showinfo=0&modestbranding=1&rel=0`;
       }
     });
 
-    // Arrow buttons
-    prevBtn.addEventListener('click', () => {
-      if (isTrailerPlaying) stopTrailer();
-      prevSlide();
-    });
-    nextBtn.addEventListener('click', () => {
-      if (isTrailerPlaying) stopTrailer();
-      nextSlide();
-    });
+    prevBtn.addEventListener('click', () => { if (isTrailerPlaying) stopTrailer(); prevSlide(); });
+    nextBtn.addEventListener('click', () => { if (isTrailerPlaying) stopTrailer(); nextSlide(); });
 
-    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') {
-        if (isTrailerPlaying) stopTrailer();
-        prevSlide();
-      } else if (e.key === 'ArrowRight') {
-        if (isTrailerPlaying) stopTrailer();
-        nextSlide();
-      } else if (e.key === 'Escape') {
-        if (isTrailerPlaying) stopTrailer();
-      }
+      if (e.key === 'ArrowLeft') { if (isTrailerPlaying) stopTrailer(); prevSlide(); }
+      else if (e.key === 'ArrowRight') { if (isTrailerPlaying) stopTrailer(); nextSlide(); }
+      else if (e.key === 'Escape') { if (isTrailerPlaying) stopTrailer(); }
     });
 
-    // Touch swipe support
     let touchStartX = 0;
-    let touchEndX = 0;
-    heroSlider.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
+    heroSlider.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
     heroSlider.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      const diff = touchStartX - touchEndX;
+      const diff = touchStartX - e.changedTouches[0].screenX;
       if (Math.abs(diff) > 60) {
         if (isTrailerPlaying) stopTrailer();
-        if (diff > 0) nextSlide();
-        else prevSlide();
+        diff > 0 ? nextSlide() : prevSlide();
       }
     });
 
-    // ============================================
-    // INIT
-    // ============================================
+    // ========== INIT ==========
     async function initApp() {
       createParticles();
       try {
-        // Load hero slider movies
         const trendingMovies = await fetchTrendingMovies();
         if (trendingMovies.length > 0) {
           renderSlides(trendingMovies);
@@ -1575,8 +1447,6 @@
         } else {
           heroSkeleton.classList.add('hidden');
         }
-
-        // Load content sections
         const trendingAll = await fetchTrending();
         populateScroll('trendingScroll', trendingAll.results.filter(i => i.poster_path));
         const popMovies = await fetchPopularMovies();
@@ -1594,9 +1464,7 @@
       }
     }
 
-    // ============================================
-    // SEARCH OVERLAY
-    // ============================================
+    // ========== SEARCH OVERLAY ==========
     const searchOverlay = document.getElementById('searchOverlay');
     const searchOverlayInput = document.getElementById('searchOverlayInput');
     const searchIconBtn = document.getElementById('searchIconBtn');
@@ -1607,7 +1475,6 @@
       searchOverlayInput.focus();
       document.body.style.overflow = 'hidden';
     }
-
     function closeSearchOverlay() {
       searchOverlay.classList.remove('active');
       searchOverlayInput.value = '';
@@ -1615,9 +1482,7 @@
     }
     searchIconBtn.addEventListener('click', openSearchOverlay);
     closeSearchOverlayBtn.addEventListener('click', closeSearchOverlay);
-    searchOverlay.addEventListener('click', (e) => {
-      if (e.target === searchOverlay) closeSearchOverlay();
-    });
+    searchOverlay.addEventListener('click', (e) => { if (e.target === searchOverlay) closeSearchOverlay(); });
     searchOverlayInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         const q = searchOverlayInput.value.trim();
@@ -1629,80 +1494,43 @@
       if (e.key === '/' && !searchOverlay.classList.contains('active') &&
         document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
         e.preventDefault();
-        openSearchOverSearchOverlay();
-      }
-   lay();
+        openSearchOverlay();
       }
     });
 
-    // });
+    // ========== MOBILE MENU ==========
+    const hamburger = document.getElementById('hamburgerBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const sideMenuOverlay = document.getElementById('sideMenuOverlay');
+    const sideMenuClose = document.getElementById('sideMenuClose');
 
-    // Mobile menu Mobile menu
-   
-    const hamburger = const hamburger = document.getElementById('h document.getElementById('hamburgeramburgerBtnBtn');
-    const');
-    const sideMenu sideMenu = document = document.getElementById('sideMenu.getElementById('sideMenu');
-   ');
-    const side const sideMenuOverMenuOverlay =lay = document.getElementById document.getElementById('sideMenuOver('sideMenuOverlaylay');
-    const');
-    const side sideMenuClose = document.getElementById('MenuClose = document.getElementById('sideMenuClose');
-    hambsideMenuClose');
-    hamburger.addEventListenerurger.addEventListener('('clickclick', () => {
-      sideMenu.classList.add('', () => {
-      sideMenu.classList.add('activeactive');
-      side');
-      sideMenuOverMenuOverlay.classListlay.classList.add('active.add('active');
-   ');
+    hamburger.addEventListener('click', () => {
+      sideMenu.classList.add('active');
+      sideMenuOverlay.classList.add('active');
     });
-    side });
-    sideMenuCloseMenuClose.addEventListener('.addEventListener('click', () =>click', () => {
-      {
-      sideMenu sideMenu.classList.remove.classList.remove('active');
-      sideMenuOverlay('active');
-      sideMenuOverlay.classList.remove('active.classList.remove('active');
-    });
-    sideMenuOverlay.addEventListener('click', () => {
+    sideMenuClose.addEventListener('click', () => {
       sideMenu.classList.remove('active');
-      sideMenuOverlay');
+      sideMenuOverlay.classList.remove('active');
     });
     sideMenuOverlay.addEventListener('click', () => {
       sideMenu.classList.remove('active');
       sideMenuOverlay.classList.remove('active');
     });
 
-    window.addEventListener('scroll', ().classList.remove('active');
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    window.addEventListener('scroll', () => => {
-      document.getElementById('navbar').classList {
-      document.getElementById('navbar').classList.toggle('sc.toggle('scrolled',rolled', window.sc window.scrollYrollY >  > 5050);
-   );
-    });
-
-    init });
-
-    initAppApp();
-    console.log('🎬 C();
-    console.log('🎬 CineStream — DynamicineStream — Dynamic Hero Slider Ready Hero Slider Ready');
- ');
-  </script </script>
-
- >
-
-  <script <script>
-   >
-    if (' if ('serviceWorkerserviceWorker' in' in navigator navigator)) {
-      navig {
-      navigator.serviceator.serviceWorker.registerWorker.register('/sw('/sw.js.js')
-        .')
-        .then(()then(() => console => console.log('.log('⚡⚡ SW registered SW registered'))
-'))
-               .catch(err => .catch(err => console.log('SW failed', err console.log('SW failed', err));
-    }
+    initApp();
+    console.log('🎬 CineStream — Dynamic Hero Slider Ready');
   </script>
-</body));
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('⚡ SW registered'))
+        .catch(err => console.log('SW failed', err));
     }
   </script>
 </body>
-</>
 </html>
