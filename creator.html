@@ -1,29 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CineStream — Creator</title>
-  <style>/* Full CSS */</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVerse - Creator</title>
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a28;
+            --accent: #7c3aed; --accent2: #a855f7; --text: #e2e8f0; --text2: #a0aec0;
+            --radius: 16px; --transition: 0.3s ease;
+            --font: 'Segoe UI', system-ui, sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:var(--font); line-height:1.7; }
+        .header {
+            padding:20px 24px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.05);
+        }
+        .logo { font-size:2rem; font-weight:800; background:linear-gradient(135deg,var(--accent2),var(--neon)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .container { max-width:900px; margin:0 auto; padding:30px 20px; }
+        .card {
+            background:var(--surface2); border-radius:var(--radius); padding:24px; margin-bottom:20px;
+            border:1px solid rgba(255,255,255,0.05);
+        }
+        h2 { color:var(--accent2); margin-bottom:12px; }
+        a { color:var(--neon); text-decoration:none; }
+        .btn {
+            display:inline-block; background:var(--accent); color:#fff; padding:12px 24px; border-radius:50px;
+            font-weight:600; transition:var(--transition); margin:6px;
+        }
+        .btn:hover { background:var(--accent2); transform:translateY(-2px); }
+        .social-links { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
+        code { background:var(--surface3); padding:2px 8px; border-radius:4px; font-size:0.9rem; }
+        pre { background:var(--surface3); padding:16px; border-radius:8px; overflow-x:auto; }
+    </style>
 </head>
 <body>
-  <!-- … same particles, overlays, navbar … -->
-  <main class="main-content" style="padding: 40px; text-align: center;">
-    <h1 style="font-size: 3rem; background: linear-gradient(135deg, var(--purple), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">CineStream</h1>
-    <p style="color: var(--text-secondary); margin-top: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
-      Built with ❤️ using TMDB API, YouTube trailers, and multiple streaming providers.<br>
-      Cinematic UI inspired by Netflix, HiAnime, and Enma.<br>
-      PWA ready, offline support, and completely static.
-    </p>
-    <div style="margin-top: 40px; color: var(--muted);">
-      <p>Version 1.0 — 2026</p>
-      <p>Contact: hello@cinestream.dev</p>
+    <div class="header">
+        <div class="logo">CineVerse Creator</div>
+        <p style="color:var(--text2);">Premium Streaming Platform by You</p>
     </div>
-  </main>
-  <script>
-    function createParticles() { /* ... */ }
-    createParticles();
-    // Add hamburger, search overlay listeners (same as index)
-  </script>
+    <div class="container">
+        <div class="card">
+            <h2>👤 Developer Profile</h2>
+            <p>Built with passion for cinematic web experiences. This project showcases a fully functional streaming frontend using only vanilla HTML, CSS, and JavaScript.</p>
+            <div class="social-links">
+                <a href="#" class="btn">GitHub</a>
+                <a href="#" class="btn">Twitter</a>
+                <a href="#" class="btn">Portfolio</a>
+            </div>
+        </div>
+        <div class="card" id="deploy">
+            <h2>🚀 Deploy to GitHub Pages</h2>
+            <ol>
+                <li>Create a GitHub repository and upload all HTML files.</li>
+                <li>Go to <strong>Settings → Pages</strong>.</li>
+                <li>Select branch <code>main</code> and folder <code>/root</code>.</li>
+                <li>Your site will be live at <code>https://yourusername.github.io/repo-name/</code>.</li>
+            </ol>
+        </div>
+        <div class="card">
+            <h2>☁️ Deploy to Cloudflare Pages</h2>
+            <ol>
+                <li>Connect your GitHub repository to Cloudflare Pages.</li>
+                <li>Set build command: <code>none</code> (static site).</li>
+                <li>Set output directory: <code>/</code>.</li>
+                <li>Deploy – instant global CDN.</li>
+            </ol>
+        </div>
+        <div class="card" id="features">
+            <h2>✨ Features</h2>
+            <ul>
+                <li>TMDB API integration for movies & TV</li>
+                <li>Multiple streaming embeds (VidPlus, VidStorm, VidRock)</li>
+                <li>Cinematic hero slider, search overlay, responsive grid</li>
+                <li>Detail pages, watch page with server switching</li>
+                <li>Advanced search with filters, trending discovery</li>
+                <li>No frameworks – pure HTML/CSS/JS</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h2>📬 Contact</h2>
+            <p>For collaboration or feedback, reach out via <a href="mailto:dev@example.com">dev@example.com</a></p>
+        </div>
+    </div>
 </body>
 </html>
