@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search - StreamVault</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <header class="site-header glass">
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+    <a href="index.html" class="logo">STREAMVAULT</a>
+    <div class="header-actions">
+      <button class="search-toggle" aria-label="Search">🔍</button>
+    </div>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="movies.html">Movies</a>
+      <a href="tv.html">TV Shows</a>
+      <a href="trending.html">Trending</a>
+    </nav>
+  </header>
+
+  <main class="search-page">
+    <div class="search-hero">
+      <input type="text" id="searchInput" placeholder="Search movies, TV shows, people..." autocomplete="off" autofocus>
+      <div class="search-filters">
+        <button class="filter-btn active" data-type="all">All</button>
+        <button class="filter-btn" data-type="movie">Movies</button>
+        <button class="filter-btn" data-type="tv">TV Shows</button>
+      </div>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+    <div class="loading-trigger" id="loadingTrigger">Loading more...</div>
+  </main>
+
+  <footer class="site-footer">
+    <p>StreamVault - Cinematic Streaming Experience</p>
+  </footer>
+
+  <script type="module" src="assets/js/search.js"></script>
+</body>
+</html>
