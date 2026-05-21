@@ -3,15 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CineStream – Schedule</title>
+  <title>Schedule - AnimeStream</title>
+  <meta name="description" content="Anime airing schedule and upcoming episodes.">
+  <link rel="icon" href="assets/icons/favicon.ico">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="navbar">...</header>
-  <main id="schedule-content"></main>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">ANIME STREAM</div>
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  </div>
+
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <canvas id="particles-canvas"></canvas>
+
+  <header class="header" id="header">
+    <div class="header-left">
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="header-center">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">A</div>
+        <span class="logo-text">AnimeStream</span>
+      </a>
+    </div>
+    <div class="header-right">
+      <button class="search-btn" id="searchBtn" aria-label="Search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-section">Menu</div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><span class="icon">🏠</span> Home</a></li>
+      <li><a href="search.html"><span class="icon">🔍</span> Search</a></li>
+      <li><a href="schedule.html" class="active"><span class="icon">📅</span> Schedule</a></li>
+    </ul>
+    <div class="sidebar-section">Library</div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html#continue-watching"><span class="icon">▶️</span> Continue Watching</a></li>
+      <li><a href="index.html#watch-history"><span class="icon">📜</span> Watch History</a></li>
+    </ul>
+    <div class="sidebar-section">More</div>
+    <ul class="sidebar-nav">
+      <li><a href="creator.html"><span class="icon">👤</span> Creator</a></li>
+    </ul>
+  </nav>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-header">
+      <div class="search-input-wrapper">
+        <svg class="search-icon-input" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search anime..." autocomplete="off">
+      </div>
+      <button class="search-close" id="searchClose">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="search-results">
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+  </div>
+
+  <main class="schedule-page">
+    <h1 class="section-title" style="margin-bottom:1.5rem"><span class="icon">📅</span> Anime Schedule</h1>
+    <div class="schedule-tabs" id="scheduleTabs">
+      <button class="schedule-tab active" data-day="monday">Monday</button>
+      <button class="schedule-tab" data-day="tuesday">Tuesday</button>
+      <button class="schedule-tab" data-day="wednesday">Wednesday</button>
+      <button class="schedule-tab" data-day="thursday">Thursday</button>
+      <button class="schedule-tab" data-day="friday">Friday</button>
+      <button class="schedule-tab" data-day="saturday">Saturday</button>
+      <button class="schedule-tab" data-day="sunday">Sunday</button>
+      <button class="schedule-tab" data-day="other">Other</button>
+    </div>
+    <div class="anime-grid" id="scheduleGrid"></div>
+    <div id="scheduleLoading" style="text-align:center;padding:2rem;color:var(--muted)">Loading...</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">AnimeStream</div>
+        <p class="footer-desc">Your premium destination for streaming anime online.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="schedule.html">Schedule</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AnimeStream. All rights reserved.</span>
+      <span>Powered by Jikan API</span>
+    </div>
+  </footer>
+
+  <nav class="mobile-nav">
+    <a href="index.html"><span class="icon">🏠</span><span>Home</span></a>
+    <a href="search.html"><span class="icon">🔍</span><span>Search</span></a>
+    <a href="schedule.html" class="active"><span class="icon">📅</span><span>Schedule</span></a>
+    <a href="creator.html"><span class="icon">👤</span><span>Creator</span></a>
+  </nav>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/storage.js"></script>
   <script src="assets/js/api.js"></script>
   <script src="assets/js/ui.js"></script>
+  <script src="assets/js/search.js"></script>
   <script src="assets/js/schedule.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', loadSchedule);</script>
 </body>
 </html>
