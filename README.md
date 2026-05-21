@@ -1,15 +1,52 @@
-# CineStream
-
-Premium movie & TV streaming website built with vanilla HTML/CSS/JS + TMDB API.
-
-## Features
-- Cinematic dark UI with glassmorphism & neon effects
-- Hero slider, continue watching, schedules
-- Serverless: runs on Cloudflare Pages + Workers
-- No user accounts, all data stored locally
-- PWA ready
-
-## Deployment
-1. Deploy `cloudflare/worker.js` to Cloudflare Workers, route `/api/tmdb/*`.
-2. Upload all other files to Cloudflare Pages or GitHub Pages.
-3. Ensure the worker URL is accessible from the frontend (same domain or proxy).
+{
+  "name": "AnimeStream - Watch Anime Online",
+  "short_name": "AnimeStream",
+  "description": "Watch anime online free in HD quality. Stream subbed and dubbed anime.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0f",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
