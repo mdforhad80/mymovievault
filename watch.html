@@ -1,188 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CineStream — Watch</title>
-  <!-- ... same meta and FULL CSS as movie.html, plus player-specific styles ... -->
-  <style>
-    /* Add to existing CSS: */
-    .player-container { padding: 20px 40px; max-width: 1200px; margin: 0 auto; }
-    .player-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-glow); }
-    .player-wrapper iframe { width: 100%; height: 100%; border: none; }
-    .player-wrapper.theater-mode { aspect-ratio: 21/9; min-height: 70vh; }
-    .player-controls { display: flex; align-items: center; gap: 10px; padding: 12px 16px; flex-wrap: wrap; background: var(--bg-secondary); border-radius: var(--radius-sm); margin-top: 12px; border: 1px solid var(--border); }
-    .server-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text); cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: var(--transition); }
-    .server-btn.active, .server-btn:hover { background: var(--purple); border-color: var(--purple); color: #fff; box-shadow: 0 0 15px var(--purple-glow); }
-    .episode-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 6px; margin-top: 10px; max-height: 200px; overflow-y: auto; }
-    .episode-btn { padding: 8px 4px; border-radius: var(--radius-xs); border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text); cursor: pointer; font-size: 0.75rem; text-align: center; transition: var(--transition); }
-    .episode-btn.active, .episode-btn:hover { background: var(--purple); border-color: var(--purple); color: #fff; }
-    .season-select { padding: 10px 14px; border-radius: var(--radius-sm); background: var(--bg-tertiary); color: var(--text); border: 1px solid var(--border); font-size: 0.9rem; cursor: pointer; min-width: 150px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVerse - Watch</title>
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a28;
+            --accent: #7c3aed; --accent2: #a855f7; --text: #e2e8f0; --text2: #a0aec0;
+            --radius: 12px; --transition: 0.3s ease;
+            --font: 'Segoe UI', system-ui, sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:var(--font); display:flex; flex-direction:column; min-height:100vh; }
+        .player-container { position:relative; width:100%; max-width:1200px; margin:0 auto; background:#000; }
+        iframe { width:100%; height:65vh; min-height:400px; border:none; }
+        .controls {
+            display:flex; flex-wrap:wrap; gap:10px; padding:14px 20px; background:var(--surface2);
+            align-items:center; justify-content:center; border-bottom:1px solid rgba(255,255,255,0.05);
+        }
+        .server-btn, .episode-nav-btn {
+            background:var(--surface3); border:none; color:var(--text2); padding:8px 16px;
+            border-radius:20px; cursor:pointer; font-size:0.85rem; transition:var(--transition);
+        }
+        .server-btn.active { background:var(--accent); color:#fff; }
+        .season-ep-select { display:flex; gap:8px; align-items:center; }
+        select {
+            background:var(--surface3); color:#fff; border:1px solid rgba(255,255,255,0.2);
+            padding:8px 12px; border-radius:8px; font-family:var(--font);
+        }
+        .back-link { color:var(--accent2); text-decoration:none; margin:10px 20px; display:inline-block; }
+        .loading {
+            position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+            background:rgba(0,0,0,0.7); z-index:5; font-size:1.2rem;
+        }
+        .loading.hidden { display:none; }
+        .theater-mode { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:#000; }
+        .theater-mode iframe { height:100vh; }
+        .info-section { padding:20px; }
+        @media (max-width:768px) {
+            iframe { height:40vh; min-height:250px; }
+        }
+    </style>
 </head>
 <body>
-  <!-- ... same particles, search overlay, side menu, navbar as movie.html ... -->
-  <main class="main-content">
-    <div class="player-container">
-      <div class="player-wrapper" id="playerWrapper">
-        <iframe id="videoPlayer" allowfullscreen loading="lazy"></iframe>
-      </div>
-      <div class="player-controls" id="playerControls">
-        <!-- dynamic content -->
-      </div>
+    <a href="index.html" class="back-link">← Back</a>
+    <div class="player-container" id="playerContainer">
+        <div class="loading" id="loading">Loading player...</div>
+        <iframe id="videoFrame" allowfullscreen allow="autoplay; encrypted-media"></iframe>
     </div>
-  </main>
-  <footer class="footer"><p>CineStream &copy; 2026</p></footer>
-  <div class="toast" id="toast" style="display:none;"></div>
-  <script type="module">
-    const API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
-    const BASE_URL = "https://api.themoviedb.org/3";
-    const IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
-    const IMG_W500 = "https://image.tmdb.org/t/p/w500";
-    const IMG_W342 = "https://image.tmdb.org/t/p/w342";
-
-    async function tmdbFetch(endpoint) {
-      const sep = endpoint.includes('?') ? '&' : '?';
-      const res = await fetch(`${BASE_URL}${endpoint}${sep}api_key=${API_KEY}`);
-      if (!res.ok) throw new Error(`TMDB error ${res.status}`);
-      return res.json();
-    }
-
-    function generateMovieEmbed(tmdbId, server) {
-      const servers = {
-        vidstorm: `https://vidstorm.ru/movie/${tmdbId}`,
-        vidrock: `https://vidrock.ru/movie/${tmdbId}`,
-        vidplus: `https://player.vidplus.to/embed/movie/${tmdbId}`,
-      };
-      return servers[server] || servers['vidplus'];
-    }
-
-    function generateTVEmbed(tmdbId, season, episode, server) {
-      const servers = {
-        vidstorm: `https://vidstorm.ru/tv/${tmdbId}/${season}/${episode}`,
-        vidrock: `https://vidrock.ru/tv/${tmdbId}/${season}/${episode}`,
-        vidplus: `https://player.vidplus.to/embed/tv/${tmdbId}/${season}/${episode}`,
-      };
-      return servers[server] || servers['vidplus'];
-    }
-
-    async function init() {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
-      const type = params.get('type'); // movie or tv
-      let season = parseInt(params.get('season')) || 1;
-      let episode = parseInt(params.get('episode')) || 1;
-      const server = params.get('server') || 'vidplus';
-
-      if (!id || !type) {
-        document.body.innerHTML = '<p style="padding:40px;color:var(--muted)">Missing parameters.</p>';
-        return;
-      }
-
-      const playerIframe = document.getElementById('videoPlayer');
-      const playerWrapper = document.getElementById('playerWrapper');
-      const controlsDiv = document.getElementById('playerControls');
-
-      function loadPlayer() {
-        if (type === 'movie') {
-          playerIframe.src = generateMovieEmbed(id, server);
-        } else {
-          playerIframe.src = generateTVEmbed(id, season, episode, server);
-        }
-      }
-
-      // Build server buttons
-      const servers = ['vidplus', 'vidstorm', 'vidrock'];
-      let serverHTML = servers.map(s => `<button class="server-btn ${s===server?'active':''}" data-server="${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('');
-
-      if (type === 'tv') {
-        // Fetch TV details to build season/episode selectors
-        try {
-          const tv = await tmdbFetch(`/tv/${id}`);
-          const seasons = tv.seasons?.filter(s => s.season_number > 0) || [];
-          const totalSeasons = seasons.length;
-          // Build season dropdown and episode grid
-          let seasonOptions = seasons.map(s => `<option value="${s.season_number}" ${s.season_number===season?'selected':''}>Season ${s.season_number}</option>`).join('');
-          controlsDiv.innerHTML = `
-            <select class="season-select" id="seasonSelect">${seasonOptions}</select>
-            <div style="display:flex; gap:10px; align-items:center;">
-              <label style="color:var(--muted);">Episode:</label>
-              <div class="episode-grid" id="episodeGrid"></div>
+    <div class="controls" id="controls">
+        <div>
+            <button class="server-btn active" data-server="vidplus">VidPlus</button>
+            <button class="server-btn" data-server="vidstorm">VidStorm</button>
+            <button class="server-btn" data-server="vidrock">VidRock</button>
+        </div>
+        <div id="tvControls" style="display:none;">
+            <div class="season-ep-select">
+                <select id="seasonSelect"></select>
+                <select id="episodeSelect"></select>
+                <button class="episode-nav-btn" id="prevEp">◀ Prev</button>
+                <button class="episode-nav-btn" id="nextEp">Next ▶</button>
             </div>
-            <div style="margin-left:auto; display:flex; gap:8px;">${serverHTML}</div>
-          `;
-          // Load episodes for current season
-          async function loadEpisodes(seasonNum) {
-            const epGrid = document.getElementById('episodeGrid');
-            if (!epGrid) return;
-            epGrid.innerHTML = '<span style="color:var(--muted);">Loading...</span>';
-            try {
-              const seasonData = await tmdbFetch(`/tv/${id}/season/${seasonNum}`);
-              const episodes = seasonData.episodes || [];
-              epGrid.innerHTML = episodes.map(ep => `
-                <button class="episode-btn ${ep.episode_number===episode?'active':''}" data-episode="${ep.episode_number}">${ep.episode_number}</button>
-              `).join('');
-              // Event listeners for episode buttons
-              epGrid.querySelectorAll('.episode-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                  episode = parseInt(btn.dataset.episode);
-                  loadPlayer();
-                  // update active class
-                  epGrid.querySelectorAll('.episode-btn').forEach(b => b.classList.remove('active'));
-                  btn.classList.add('active');
+        </div>
+        <button class="server-btn" id="theaterBtn">🖥 Theater</button>
+        <button class="server-btn" id="fullscreenBtn">⛶ Fullscreen</button>
+    </div>
+    <div class="info-section" id="infoSection"></div>
+
+    <script>
+        const TMDB_API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        const type = params.get('type') || 'movie';
+        let season = parseInt(params.get('season')) || 1;
+        let episode = parseInt(params.get('episode')) || 1;
+        let currentServer = 'vidplus';
+
+        const servers = {
+            vidplus: type==='movie' ? `https://player.vidplus.to/embed/movie/${id}` : `https://player.vidplus.to/embed/tv/${id}/${season}/${episode}`,
+            vidstorm: type==='movie' ? `https://vidstorm.ru/movie/${id}` : `https://vidstorm.ru/tv/${id}/${season}/${episode}`,
+            vidrock: type==='movie' ? `https://vidrock.ru/movie/${id}` : `https://vidrock.ru/tv/${id}/${season}/${episode}`,
+        };
+
+        function setServer(server) {
+            currentServer = server;
+            document.querySelectorAll('.server-btn[data-server]').forEach(b=>b.classList.remove('active'));
+            document.querySelector(`.server-btn[data-server="${server}"]`)?.classList.add('active');
+            updateIframe();
+        }
+
+        function updateIframe() {
+            const frame = document.getElementById('videoFrame');
+            const loading = document.getElementById('loading');
+            loading.classList.remove('hidden');
+            frame.src = servers[currentServer];
+            frame.onload = () => loading.classList.add('hidden');
+            frame.onerror = () => { loading.innerHTML = 'Failed to load video. Try another server.'; };
+        }
+
+        document.querySelectorAll('.server-btn[data-server]').forEach(btn=>{
+            btn.addEventListener('click', ()=> setServer(btn.dataset.server));
+        });
+
+        // TV controls
+        async function loadTVInfo() {
+            if (type !== 'tv') return;
+            document.getElementById('tvControls').style.display = 'flex';
+            const data = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${TMDB_API_KEY}`).then(r=>r.json());
+            const totalSeasons = data.number_of_seasons || 0;
+            const seasonSelect = document.getElementById('seasonSelect');
+            seasonSelect.innerHTML = '';
+            for(let i=1; i<=totalSeasons; i++) {
+                const opt = document.createElement('option');
+                opt.value = i; opt.textContent = `Season ${i}`;
+                if(i===season) opt.selected = true;
+                seasonSelect.appendChild(opt);
+            }
+            await loadEpisodes(season);
+            seasonSelect.addEventListener('change', async (e)=>{
+                season = parseInt(e.target.value);
+                episode = 1;
+                await loadEpisodes(season);
+                updateIframe();
+            });
+        }
+
+        async function loadEpisodes(seasonNum) {
+            const data = await fetch(`https://api.themoviedb.org/3/tv/${id}/season/${seasonNum}?api_key=${TMDB_API_KEY}`).then(r=>r.json());
+            const epSelect = document.getElementById('episodeSelect');
+            epSelect.innerHTML = '';
+            if (data.episodes) {
+                data.episodes.forEach(ep => {
+                    const opt = document.createElement('option');
+                    opt.value = ep.episode_number;
+                    opt.textContent = `Ep ${ep.episode_number} - ${ep.name}`;
+                    if(ep.episode_number === episode) opt.selected = true;
+                    epSelect.appendChild(opt);
                 });
-              });
-            } catch (e) { epGrid.innerHTML = '<span style="color:var(--muted);">Error</span>'; }
-          }
-          loadEpisodes(season);
-          document.getElementById('seasonSelect').addEventListener('change', (e) => {
-            season = parseInt(e.target.value);
-            episode = 1; // reset to first episode
-            loadPlayer();
-            loadEpisodes(season);
-          });
-        } catch (e) {
-          controlsDiv.innerHTML = `<span style="color:var(--muted);">TV data unavailable.</span> ${serverHTML}`;
+            }
+            epSelect.addEventListener('change', (e)=>{
+                episode = parseInt(e.target.value);
+                updateIframe();
+            });
         }
-      } else {
-        controlsDiv.innerHTML = `
-          <div style="flex:1;"></div>
-          <div style="display:flex; gap:8px;">${serverHTML}</div>
-        `;
-      }
 
-      // Server switch buttons
-      controlsDiv.addEventListener('click', (e) => {
-        if (e.target.classList.contains('server-btn')) {
-          const newServer = e.target.dataset.server;
-          controlsDiv.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          if (type === 'movie') {
-            playerIframe.src = generateMovieEmbed(id, newServer);
-          } else {
-            playerIframe.src = generateTVEmbed(id, season, episode, newServer);
-          }
+        document.getElementById('prevEp').addEventListener('click', ()=>{
+            if(episode>1) { episode--; document.getElementById('episodeSelect').value = episode;
+                updateIframe(); }
+        });
+        document.getElementById('nextEp').addEventListener('click', async ()=>{
+            const maxEp = document.getElementById('episodeSelect').options.length;
+            if(episode < maxEp) { episode++; document.getElementById('episodeSelect').value = episode;
+                updateIframe(); }
+        });
+
+        // Theater mode
+        document.getElementById('theaterBtn').addEventListener('click', ()=>{
+            document.getElementById('playerContainer').classList.toggle('theater-mode');
+        });
+        document.getElementById('fullscreenBtn').addEventListener('click', ()=>{
+            const iframe = document.getElementById('videoFrame');
+            if(iframe.requestFullscreen) iframe.requestFullscreen();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e)=>{
+            if(e.key === 'f' && !e.ctrlKey) document.getElementById('fullscreenBtn').click();
+            if(e.key === 't' && !e.ctrlKey) document.getElementById('theaterBtn').click();
+        });
+
+        // Load info
+        async function loadInfo() {
+            const data = await fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${TMDB_API_KEY}`).then(r=>r.json());
+            document.getElementById('infoSection').innerHTML = `
+                <h2>${data.title || data.name} (${(data.release_date||data.first_air_date||'').slice(0,4)})</h2>
+                <p>⭐ ${data.vote_average?.toFixed(1)} | ${data.overview?.slice(0,200)}...</p>`;
         }
-      });
 
-      loadPlayer();
-
-      // Theater mode toggle with 't' key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 't') {
-          playerWrapper.classList.toggle('theater-mode');
-        } else if (e.key === 'f') {
-          if (playerIframe.requestFullscreen) {
-            playerIframe.requestFullscreen();
-          } else if (playerIframe.webkitRequestFullscreen) {
-            playerIframe.webkitRequestFullscreen();
-          }
-        }
-      });
-    }
-
-    // ... same navbar/search/menu/particles code as movie.html ...
-    init();
-  </script>
+        updateIframe();
+        if(type==='tv') loadTVInfo();
+        loadInfo();
+    </script>
 </body>
 </html>
