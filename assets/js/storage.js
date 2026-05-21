@@ -1,41 +1,46 @@
-const CW_KEY = 'continueWatching';
-const HISTORY_KEY = 'watchHistory';
+// storage.js – localStorage wrapper for watch history & continue watching
+const STORAGE_KEYS = {
+  HISTORY: 'cine_history',
+  CONTINUE: 'cine_continue',
+  SETTINGS: 'cine_settings'
+};
 
-export function getContinueWatching() {
+function getHistory() {
   try {
-    return JSON.parse(localStorage.getItem(CW_KEY)) || [];
-  } catch {
-    return [];
-  }
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY)) || [];
+  } catch { return []; }
+}
+function addToHistory(item) {
+  const history = getHistory().filter(h => h.id !== item.id || h.type !== item.type);
+  history.unshift({ ...item, timestamp: Date.now() });
+  localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history.slice(0, 50))); // keep latest 50
 }
 
-export function addContinueWatching(item) {
-  const list = getContinueWatching();
-  const existing = list.findIndex(i => i.id === item.id && i.type === item.type);
-  if (existing !== -1) list.splice(existing, 1);
+function getContinueWatching() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTINUE)) || [];
+  } catch { return []; }
+}
+function updateContinueWatching(item) {
+  const list = getContinueWatching().filter(c => !(c.id === item.id && c.type === item.type && c.season === item.season));
   list.unshift(item);
-  if (list.length > 20) list.pop();
-  localStorage.setItem(CW_KEY, JSON.stringify(list));
+  localStorage.setItem(STORAGE_KEYS.CONTINUE, JSON.stringify(list.slice(0, 30)));
+}
+function removeContinueWatching(id, type) {
+  let list = getContinueWatching();
+  list = list.filter(c => !(c.id === id && c.type === type));
+  localStorage.setItem(STORAGE_KEYS.CONTINUE, JSON.stringify(list));
 }
 
-export function removeContinueWatching(id, type) {
-  const list = getContinueWatching().filter(i => !(i.id === id && i.type === type));
-  localStorage.setItem(CW_KEY, JSON.stringify(list));
-}
-
-export function getWatchHistory() {
+// Settings (like server preference)
+function getSetting(key, def) {
   try {
-    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-  } catch {
-    return [];
-  }
+    const settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {};
+    return settings[key] !== undefined ? settings[key] : def;
+  } catch { return def; }
 }
-
-export function addToHistory(item) {
-  const list = getWatchHistory();
-  const existing = list.findIndex(i => i.id === item.id && i.type === item.type);
-  if (existing !== -1) list.splice(existing, 1);
-  list.unshift({ ...item, watchedAt: new Date().toISOString() });
-  if (list.length > 50) list.pop();
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+function setSetting(key, value) {
+  const settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {};
+  settings[key] = value;
+  localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
 }
