@@ -3,40 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Details - StreamVault</title>
+    <meta name="description" content="StreamVault - Movie & TV Show Details. View cast, trailers, recommendations, and watch now.">
+    <title>Details - StreamVault</title>
     <style>
         :root {
-            --bg: #0a0a0a; --surface: #141414; --surface2: #1a1a1a; --accent: #7c3aed; --accent2: #a855f7;
-            --text: #f1f1f1; --text2: #b0b0b0; --gold: #f59e0b; --radius: 12px;
-            --transition: 0.3s ease; --font: 'Segoe UI', system-ui, sans-serif;
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface2: #1a1a1a;
+            --accent: #7c3aed;
+            --accent2: #a855f7;
+            --gold: #f59e0b;
+            --text: #f1f1f1;
+            --text2: #b0b0b0;
+            --radius: 12px;
+            --transition: 0.3s ease;
+            --font: 'Segoe UI', system-ui, sans-serif;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:var(--bg); color:var(--text); font-family:var(--font); }
-        .header { position:fixed; top:0; left:0; right:0; z-index:100; height:64px; background:rgba(10,10,10,0.9); backdrop-filter:blur(20px); display:flex; align-items:center; padding:0 20px; gap:16px; }
-        .logo { flex:1; font-weight:800; font-size:1.4rem; color:#fff; text-decoration:none; }
-        .btn { padding:10px 22px; border-radius:30px; font-weight:600; border:none; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
-        .btn-primary { background:var(--accent); color:#fff; }
-        .hero-detail { position:relative; width:100%; height:60vh; min-height:400px; overflow:hidden; }
-        .hero-detail .backdrop { position:absolute; inset:0; background-size:cover; background-position:center; }
-        .hero-detail .overlay { position:absolute; inset:0; background:linear-gradient(to top, var(--bg) 10%, transparent 70%); }
-        .detail-content { position:relative; z-index:2; max-width:1200px; margin:-120px auto 0; padding:0 20px; display:flex; gap:30px; flex-wrap:wrap; }
-        .poster { width:280px; border-radius:var(--radius); box-shadow:0 10px 30px rgba(0,0,0,0.6); flex-shrink:0; }
+        body { background:var(--bg); color:var(--text); font-family:var(--font); line-height:1.5; }
+        .header { position:fixed; top:0; left:0; right:0; z-index:100; height:64px; background:rgba(10,10,10,0.9); backdrop-filter:blur(20px); display:flex; align-items:center; padding:0 20px; gap:15px; }
+        .logo { color:#fff; text-decoration:none; font-weight:800; font-size:1.4rem; }
+        .hero-backdrop { width:100%; height:60vh; min-height:400px; background-size:cover; background-position:center top; position:relative; }
+        .hero-overlay { position:absolute; inset:0; background:linear-gradient(to top, var(--bg) 5%, transparent 70%); }
+        .detail-container { max-width:1200px; margin:-120px auto 0; padding:0 20px 40px; position:relative; z-index:2; display:flex; gap:30px; flex-wrap:wrap; }
+        .poster { width:280px; border-radius:var(--radius); box-shadow:0 10px 30px rgba(0,0,0,0.7); flex-shrink:0; }
         .info { flex:1; min-width:280px; }
-        .cast-scroller { display:flex; gap:12px; overflow-x:auto; padding:10px 0; }
-        .cast-card { flex:0 0 auto; width:120px; text-align:center; }
-        .cast-card img { width:100%; border-radius:50%; aspect-ratio:1; object-fit:cover; }
-        .similar-scroller { display:flex; gap:14px; overflow-x:auto; }
-        .similar-card { flex:0 0 auto; width:150px; border-radius:var(--radius); overflow:hidden; background:var(--surface); cursor:pointer; text-decoration:none; color:inherit; }
+        .info h1 { font-size:2.2rem; font-weight:800; margin-bottom:5px; }
+        .meta { display:flex; gap:15px; flex-wrap:wrap; color:var(--text2); margin-bottom:15px; align-items:center; }
+        .badge { background:var(--accent); padding:4px 12px; border-radius:20px; font-size:0.8rem; }
+        .btn { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:30px; font-weight:600; border:none; cursor:pointer; text-decoration:none; font-size:0.95rem; transition:var(--transition); }
+        .btn-primary { background:var(--accent); color:#fff; }
+        .btn-primary:hover { background:var(--accent2); transform:translateY(-2px); }
+        .btn-outline { background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.2); }
+        .btn-outline:hover { background:rgba(255,255,255,0.2); }
+        .cast-scroller, .similar-scroller { display:flex; gap:14px; overflow-x:auto; padding:10px 0; }
+        .cast-card { flex:0 0 auto; width:100px; text-align:center; }
+        .cast-card img { width:80px; height:80px; border-radius:50%; object-fit:cover; background:var(--surface2); }
+        .similar-card { flex:0 0 auto; width:150px; border-radius:var(--radius); overflow:hidden; background:var(--surface); text-decoration:none; color:inherit; transition:var(--transition); }
+        .similar-card:hover { transform:translateY(-5px); border:1px solid var(--accent); }
         .similar-card img { width:100%; aspect-ratio:2/3; object-fit:cover; }
-        @media (max-width:768px) { .detail-content { flex-direction:column; margin-top:-80px; } .poster { width:180px; } }
+        .similar-card .sim-title { padding:8px; font-weight:500; font-size:0.85rem; }
+        .trailer-btn { cursor:pointer; }
+        .modal { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.85); align-items:center; justify-content:center; }
+        .modal.active { display:flex; }
+        .modal-content { width:90%; max-width:800px; position:relative; }
+        .modal-content iframe { width:100%; aspect-ratio:16/9; border:none; border-radius:12px; }
+        .modal-close { position:absolute; top:-40px; right:0; color:#fff; font-size:1.5rem; cursor:pointer; background:none; border:none; }
+        @media (max-width:768px) {
+            .detail-container { flex-direction:column; margin-top:-80px; }
+            .poster { width:180px; margin:0 auto; }
+            .info h1 { font-size:1.6rem; }
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <a href="index.html" class="logo">◀ StreamVault</a>
     </header>
-    <div class="hero-detail" id="heroDetail"></div>
-    <div class="detail-content" id="detailContent"></div>
+    <div class="hero-backdrop" id="heroBackdrop"></div>
+    <div class="detail-container" id="detailContainer"></div>
+    <div class="modal" id="trailerModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">✕</button>
+            <div id="trailerPlayer"></div>
+        </div>
+    </div>
     <script>
         const params = new URLSearchParams(window.location.search);
         const type = params.get('type'); // movie or tv
@@ -44,6 +75,7 @@
         const TMDB_API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
         const BASE = "https://api.themoviedb.org/3";
         const IMG = "https://image.tmdb.org/t/p";
+
         async function fetchTMDB(endpoint, p = {}) {
             const url = new URL(`${BASE}${endpoint}`);
             url.searchParams.set('api_key', TMDB_API_KEY);
@@ -52,41 +84,74 @@
             return res.ok ? res.json() : null;
         }
         function img(path, size='/w500') { return path ? `${IMG}${size}${path}` : ''; }
-        async function loadDetails() {
+
+        async function loadDetail() {
             if (!id || !type) return;
             const data = await fetchTMDB(`/${type}/${id}`, {append_to_response:'credits,videos,recommendations,similar'});
             if (!data) return;
+            document.getElementById('heroBackdrop').style.backgroundImage = `url(${img(data.backdrop_path, '/w1280')})`;
             const title = data.title || data.name;
-            const hero = document.getElementById('heroDetail');
-            hero.innerHTML = `<div class="backdrop" style="background-image:url('${img(data.backdrop_path, '/w1280')}')"></div><div class="overlay"></div>`;
-            const content = document.getElementById('detailContent');
-            content.innerHTML = `
+            const year = (data.release_date || data.first_air_date || '').substring(0,4);
+            const rating = data.vote_average?.toFixed(1);
+            const runtime = data.runtime ? `${data.runtime} min` : data.number_of_seasons ? `${data.number_of_seasons} seasons` : '';
+            const genres = data.genres?.map(g => g.name).join(', ') || '';
+            const overview = data.overview || 'No overview available.';
+
+            let trailerKey = null;
+            const videos = data.videos?.results || [];
+            const trailer = videos.find(v => v.type === 'Trailer' && v.site === 'YouTube') || videos[0];
+            if (trailer) trailerKey = trailer.key;
+
+            const cast = data.credits?.cast?.slice(0,12) || [];
+            const similar = (data.similar?.results || data.recommendations?.results || []).filter(s => s.poster_path).slice(0,12);
+
+            document.getElementById('detailContainer').innerHTML = `
                 <img class="poster" src="${img(data.poster_path)}" alt="${title}">
                 <div class="info">
-                    <h1>${title} (${(data.release_date||data.first_air_date||'').substring(0,4)})</h1>
-                    <p style="color:var(--gold);">⭐ ${data.vote_average?.toFixed(1)} | ${data.runtime ? data.runtime+' min' : data.number_of_seasons ? data.number_of_seasons+' seasons' : ''}</p>
-                    <p>${data.overview}</p>
-                    <p><strong>Genres:</strong> ${data.genres?.map(g=>g.name).join(', ')}</p>
-                    <a href="watch.html?type=${type}&id=${id}" class="btn btn-primary" style="margin:15px 0;">▶ Watch Now</a>
-                    <div><strong>Cast:</strong></div>
-                    <div class="cast-scroller" id="castScroller"></div>
-                    <div style="margin-top:20px;"><strong>Similar</strong></div>
-                    <div class="similar-scroller" id="similarScroller"></div>
+                    <h1>${title} (${year})</h1>
+                    <div class="meta">
+                        <span style="color:var(--gold); font-weight:600;">⭐ ${rating}</span>
+                        <span>${runtime}</span>
+                        <span class="badge">${type.toUpperCase()}</span>
+                    </div>
+                    <p style="color:var(--text2); margin-bottom:10px;"><strong>Genres:</strong> ${genres}</p>
+                    <p style="margin-bottom:20px;">${overview}</p>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:25px;">
+                        <a href="watch.html?type=${type}&id=${id}" class="btn btn-primary">▶ Watch Now</a>
+                        ${trailerKey ? `<button class="btn btn-outline trailer-btn" data-trailer="${trailerKey}">🎬 Trailer</button>` : ''}
+                    </div>
+                    <h3>Cast</h3>
+                    <div class="cast-scroller">${cast.map(c => `
+                        <div class="cast-card">
+                            <img src="${img(c.profile_path, '/w185')}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 fill=%22%23333%22><rect width=%2280%22 height=%2280%22 rx=%2240%22/></svg>';">
+                            <small>${c.name}</small>
+                        </div>`).join('')}</div>
+                    <h3 style="margin-top:20px;">Similar</h3>
+                    <div class="similar-scroller">${similar.map(s => `
+                        <a href="movie.html?type=${s.media_type || type}&id=${s.id}" class="similar-card">
+                            <img src="${img(s.poster_path, '/w342')}" loading="lazy">
+                            <div class="sim-title">${s.title || s.name}</div>
+                        </a>`).join('')}</div>
                 </div>`;
-            // Cast
-            const cast = data.credits?.cast?.slice(0,12) || [];
-            document.getElementById('castScroller').innerHTML = cast.map(c => `
-                <div class="cast-card"><img src="${img(c.profile_path, '/w185')}" onerror="this.src='data:image/svg+xml,...'"><div>${c.name}</div></div>
-            `).join('');
-            // Similar
-            const similar = (data.similar?.results || data.recommendations?.results || []).filter(s=>s.poster_path).slice(0,12);
-            document.getElementById('similarScroller').innerHTML = similar.map(s => `
-                <a href="movie.html?type=${s.media_type || type}&id=${s.id}" class="similar-card">
-                    <img src="${img(s.poster_path, '/w342')}" loading="lazy">
-                    <div style="padding:6px;">${s.title||s.name}</div>
-                </a>`).join('');
+            // Trailer modal
+            if (trailerKey) {
+                document.querySelector('.trailer-btn').addEventListener('click', () => {
+                    document.getElementById('trailerPlayer').innerHTML = `<iframe src="https://www.youtube.com/embed/${trailerKey}?autoplay=1" allowfullscreen></iframe>`;
+                    document.getElementById('trailerModal').classList.add('active');
+                });
+            }
         }
-        loadDetails();
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('trailerModal').classList.remove('active');
+            document.getElementById('trailerPlayer').innerHTML = '';
+        });
+        document.getElementById('trailerModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+                document.getElementById('trailerPlayer').innerHTML = '';
+            }
+        });
+        loadDetail();
     </script>
 </body>
 </html>
