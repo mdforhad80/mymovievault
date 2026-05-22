@@ -479,7 +479,7 @@ async function loadDetail() {
         <h2 class="section-title">You May Also Like</h2>
         <div class="rec-slider">
           ${recs.map(r => `
-            <div class="rec-card" onclick="window.location.href='movie.html?id=${r.id}&type=${MEDIA_TYPE}'">
+            <div class="rec-card" onclick="window.location.href='info.html?id=${r.id}&type=${MEDIA_TYPE}'">
               <img class="rec-poster" src="${imgUrl(r.poster_path,'w342')}" alt="${r.title||r.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/160x240/0f0f1a/7c3aed?text=?'">
               <div class="rec-title">${truncate(r.title||r.name, 20)}</div>
               <div class="rec-year">${getYear(r.release_date||r.first_air_date)} · ⭐ ${getRating(r.vote_average)}</div>
