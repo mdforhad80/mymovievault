@@ -1,91 +1,382 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trending - CineStream</title>
-    <style>
-        :root {
-            --bg:#0a0a0a; --bg2:#111; --glass:rgba(20,20,20,0.75); --border:rgba(255,255,255,0.06);
-            --text:#e0e0e0; --accent:#8b5cf6; --radius:14px; --transition:0.3s;
-        }
-        *{box-sizing:border-box; margin:0; padding:0;}
-        body{background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif;}
-        .header{position:sticky; top:0; background:rgba(10,10,10,0.9); backdrop-filter:blur(20px); padding:12px 5%; display:flex; align-items:center; border-bottom:1px solid var(--border);}
-        .logo{font-size:1.5rem; font-weight:800; background:linear-gradient(135deg,#fff,var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-right:auto;}
-        .tabs{display:flex; gap:10px; padding:16px 5%;}
-        .tab-btn{background:var(--glass); border:1px solid var(--border); color:#fff; padding:8px 18px; border-radius:20px; cursor:pointer;}
-        .tab-btn.active{background:var(--accent);}
-        .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:16px; padding:0 5% 30px;}
-        .rank-card{position:relative; border-radius:var(--radius); overflow:hidden; background:var(--bg2); transition:var(--transition); cursor:pointer; border:1px solid transparent;}
-        .rank-card:hover{transform:translateY(-6px); border-color:var(--accent);}
-        .rank-card img{width:100%; aspect-ratio:2/3; object-fit:cover;}
-        .rank-number{position:absolute; top:6px; left:6px; background:var(--accent); color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; z-index:2;}
-        .card-info{padding:10px;}
-        .card-info .title{font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-        .card-info .meta{font-size:0.8rem; color:#aaa;}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StreamVault — Trending</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050508;--bg2:#0a0a12;--bg3:#0f0f1a;
+  --glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.08);
+  --purple:#7c3aed;--purple2:#a855f7;--blue:#2563eb;
+  --neon:#c084fc;--neon2:#818cf8;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --gold:#fbbf24;
+  --radius:12px;--radius2:20px;
+  --transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;}
+img{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;}
+::-webkit-scrollbar{width:6px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--purple);border-radius:3px;}
+
+/* HEADER */
+#header{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:70px;display:flex;align-items:center;
+  padding:0 24px;gap:16px;
+  background:rgba(5,5,8,0.95);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.header-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;background:linear-gradient(135deg,var(--neon),var(--neon2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.header-spacer{flex:1;}
+.header-back{display:flex;align-items:center;gap:6px;color:var(--text2);font-size:14px;padding:6px 14px;border-radius:8px;background:var(--glass2);border:1px solid var(--border);transition:var(--transition);}
+.header-back:hover{color:var(--text);}
+.header-back svg{width:15px;height:15px;}
+
+/* HERO BANNER */
+.trending-hero{
+  padding-top:70px;
+  position:relative;height:400px;overflow:hidden;
+  display:flex;align-items:flex-end;
+}
+.trending-hero-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  filter:blur(2px);transform:scale(1.05);
+}
+.trending-hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,var(--bg) 0%,rgba(5,5,8,0.7) 50%,rgba(5,5,8,0.4) 100%),
+  linear-gradient(to right,rgba(5,5,8,0.8) 0%,transparent 50%);
+}
+.trending-hero-content{
+  position:relative;z-index:10;padding:40px 6%;max-width:600px;
+}
+.trending-hero-label{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:20px;
+  background:rgba(124,58,237,0.3);border:1px solid rgba(192,132,252,0.3);
+  font-size:12px;font-weight:700;letter-spacing:1px;
+  color:var(--neon);margin-bottom:16px;text-transform:uppercase;
+}
+.trending-hero-label::before{content:'🔥';}
+.trending-hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,5vw,64px);letter-spacing:2px;margin-bottom:12px;
+}
+.trending-hero-meta{color:var(--text2);font-size:14px;}
+
+/* PERIOD TABS */
+.period-tabs-wrap{
+  max-width:1400px;margin:0 auto;padding:32px 24px 0;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.period-tabs{display:flex;gap:8px;}
+.period-tab{
+  padding:10px 24px;border-radius:20px;
+  font-size:14px;font-weight:600;
+  background:var(--glass2);border:1px solid var(--border);
+  color:var(--text2);transition:var(--transition);
+}
+.period-tab.active{background:var(--purple);border-color:var(--purple);color:white;}
+.period-tab:hover:not(.active){color:var(--text);}
+
+/* SECTIONS */
+.trending-section{max-width:1400px;margin:0 auto;padding:40px 24px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.section-title{
+  font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1.5px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-title::before{content:'';width:4px;height:24px;border-radius:2px;background:linear-gradient(to bottom,var(--purple2),var(--neon2));}
+.section-see-all{font-size:13px;color:var(--purple2);font-weight:500;}
+.section-see-all:hover{color:var(--neon);}
+
+/* RANKING GRID */
+.ranking-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:20px;
+}
+.rank-card{
+  display:flex;gap:12px;align-items:flex-start;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius2);padding:16px;
+  cursor:pointer;transition:var(--transition);
+}
+.rank-card:hover{border-color:var(--purple);background:var(--glass);transform:translateY(-4px);}
+.rank-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:48px;line-height:1;
+  color:var(--purple2);flex-shrink:0;width:44px;text-align:center;
+  opacity:0.8;
+}
+.rank-num.top3{color:var(--gold);opacity:1;}
+.rank-poster{
+  width:60px;height:90px;border-radius:8px;
+  object-fit:cover;flex-shrink:0;
+  background:var(--bg2);border:1px solid var(--border);
+}
+.rank-info{flex:1;min-width:0;}
+.rank-title{font-size:14px;font-weight:700;margin-bottom:4px;line-height:1.3;}
+.rank-meta{font-size:12px;color:var(--text2);margin-bottom:6px;}
+.rank-rating{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--gold);font-weight:600;}
+
+/* HORIZONTAL SLIDER */
+.slider-wrap{position:relative;padding:0;}
+.slider-track-container{overflow:hidden;border-radius:var(--radius);cursor:grab;}
+.slider-track-container:active{cursor:grabbing;}
+.slider-track{display:flex;gap:14px;transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);will-change:transform;padding:8px 0 16px;}
+.slider-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:44px;height:80px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(to right,rgba(5,5,8,0.95),rgba(10,10,18,0.8));
+  border:1px solid var(--border);backdrop-filter:blur(10px);
+  color:var(--text);z-index:10;border-radius:8px;transition:var(--transition);opacity:0;
+}
+.slider-wrap:hover .slider-btn{opacity:1;}
+.slider-btn:hover{background:var(--purple);border-color:var(--purple);}
+.slider-btn.prev{left:0;border-radius:0 8px 8px 0;}
+.slider-btn.next{right:0;border-radius:8px 0 0 8px;}
+.slider-btn svg{width:20px;height:20px;}
+
+/* MEDIA CARD */
+.media-card{flex:0 0 auto;width:160px;cursor:pointer;position:relative;transition:var(--transition);border-radius:var(--radius);overflow:hidden;}
+.media-card:hover{transform:scale(1.06) translateY(-6px);z-index:10;}
+.media-card:hover .card-overlay{opacity:1;}
+.card-poster{width:100%;aspect-ratio:2/3;object-fit:cover;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border);transition:var(--transition);}
+.media-card:hover .card-poster{border-color:var(--purple);box-shadow:0 0 0 2px rgba(124,58,237,0.4);}
+.card-badges{position:absolute;top:8px;left:8px;display:flex;gap:4px;flex-direction:column;align-items:flex-start;}
+.card-badge{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+.card-badge-hd{background:rgba(124,58,237,0.8);color:white;}
+.card-badge-rating{background:rgba(0,0,0,0.7);color:var(--gold);display:flex;align-items:center;gap:3px;backdrop-filter:blur(4px);}
+.card-overlay{
+  position:absolute;inset:0;border-radius:var(--radius);
+  background:linear-gradient(to top,rgba(5,5,8,0.95) 0%,rgba(5,5,8,0.4) 50%,transparent 100%);
+  opacity:0;transition:var(--transition);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:12px;
+}
+.card-play-btn{width:40px;height:40px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 15px rgba(124,58,237,0.5);}
+.card-title-overlay{font-size:12px;font-weight:600;text-align:center;margin-bottom:4px;line-height:1.3;}
+.card-year-overlay{font-size:11px;color:var(--text2);text-align:center;}
+
+/* SKELETON */
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg2) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius);}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+@media(max-width:768px){
+  .trending-section{padding:24px 16px;}
+  .period-tabs-wrap{padding:24px 16px 0;}
+  .ranking-grid{grid-template-columns:1fr;}
+  .media-card{width:130px;}
+}
+</style>
 </head>
 <body>
-    <header class="header">
-        <a href="index.html" class="logo">CineStream</a>
-        <span style="font-size:1.2rem;">🔥 Trending</span>
-    </header>
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('day')">Today</button>
-        <button class="tab-btn" onclick="switchTab('week')">This Week</button>
+
+<header id="header">
+  <a href="index.html" class="header-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Home
+  </a>
+  <div class="header-spacer"></div>
+  <a href="index.html" class="header-logo">StreamVault</a>
+</header>
+
+<!-- HERO BANNER -->
+<div class="trending-hero" id="trending-hero">
+  <div class="trending-hero-bg" id="hero-bg"></div>
+  <div class="trending-hero-overlay"></div>
+  <div class="trending-hero-content">
+    <div class="trending-hero-label">Trending Now</div>
+    <h1 class="trending-hero-title" id="hero-title">Loading…</h1>
+    <div class="trending-hero-meta" id="hero-meta"></div>
+  </div>
+</div>
+
+<!-- PERIOD TABS -->
+<div class="period-tabs-wrap">
+  <div class="period-tabs">
+    <button class="period-tab active" onclick="setPeriod('day',this)">Today</button>
+    <button class="period-tab" onclick="setPeriod('week',this)">This Week</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="trending-content"></div>
+
+<footer style="background:var(--bg2);border-top:1px solid var(--border);padding:30px 24px;text-align:center;margin-top:40px;">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--neon),var(--neon2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;">StreamVault</div>
+  <p style="font-size:13px;color:var(--text3);">© 2025 <span style="color:var(--purple2)">StreamVault</span>. Data from <span style="color:var(--purple2)">TMDB</span>.</p>
+</footer>
+
+<script>
+const TMDB_KEY="e10da2e2cbb23ea7ebfb64c3a188b64a";
+const TMDB_BASE="https://api.themoviedb.org/3";
+const IMG_BASE="https://image.tmdb.org/t/p/";
+let currentPeriod='day';
+
+async function tmdbFetch(endpoint,retries=3){
+  for(let i=0;i<retries;i++){
+    try{
+      const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);
+      const res=await fetch(`${TMDB_BASE}${endpoint}&api_key=${TMDB_KEY}`,{signal:c.signal});
+      clearTimeout(t);if(!res.ok)throw new Error();return await res.json();
+    }catch(e){if(i===retries-1)throw e;await new Promise(r=>setTimeout(r,1000*(i+1)));}
+  }
+}
+function imgUrl(p,s='w342'){return p?`${IMG_BASE}${s}${p}`:'https://via.placeholder.com/160x240/0f0f1a/7c3aed?text=?';}
+function getRating(r){return r?r.toFixed(1):'N/A';}
+function getYear(d){return d?d.slice(0,4):'';}
+function truncate(s,n){return s&&s.length>n?s.slice(0,n)+'…':(s||'');}
+
+function setPeriod(period,btn){
+  currentPeriod=period;
+  document.querySelectorAll('.period-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadTrending();
+}
+
+function createSlider(wrapId){
+  const wrap=document.getElementById(wrapId);
+  if(!wrap)return;
+  const track=wrap.querySelector('.slider-track');
+  const prev=wrap.querySelector('.slider-btn.prev');
+  const next=wrap.querySelector('.slider-btn.next');
+  if(!track)return;
+  let pos=0,isDragging=false,startX=0,startPos=0;
+  function getMax(){return-(track.scrollWidth-track.parentElement.offsetWidth+48);}
+  function move(p){pos=Math.max(getMax(),Math.min(0,p));track.style.transform=`translateX(${pos}px)`;prev?.classList.toggle('disabled',pos>=0);next?.classList.toggle('disabled',pos<=getMax());}
+  const cw=174;
+  prev?.addEventListener('click',()=>move(pos+cw*4));
+  next?.addEventListener('click',()=>move(pos-cw*4));
+  track.addEventListener('mousedown',e=>{isDragging=true;startX=e.clientX;startPos=pos;track.style.transition='none';e.preventDefault();});
+  window.addEventListener('mousemove',e=>{if(!isDragging)return;move(startPos+(e.clientX-startX));});
+  window.addEventListener('mouseup',()=>{if(!isDragging)return;isDragging=false;track.style.transition='';});
+  track.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startPos=pos;track.style.transition='none';},{passive:true});
+  track.addEventListener('touchmove',e=>{move(startPos+(e.touches[0].clientX-startX));},{passive:true});
+  track.addEventListener('touchend',()=>{track.style.transition='';},{passive:true});
+}
+
+function createCard(item,type){
+  const title=item.title||item.name||'Unknown';
+  const year=getYear(item.release_date||item.first_air_date);
+  const rating=getRating(item.vote_average);
+  return `<div class="media-card" onclick="window.location.href='movie.html?id=${item.id}&type=${type}'">
+    <img class="card-poster" src="${imgUrl(item.poster_path,'w342')}" alt="${title}" loading="lazy" onerror="this.src='https://via.placeholder.com/160x240/0f0f1a/7c3aed?text=?'">
+    <div class="card-badges">
+      <span class="card-badge card-badge-hd">HD</span>
+      <span class="card-badge card-badge-rating">⭐ ${rating}</span>
     </div>
-    <div class="grid" id="trendingGrid"></div>
+    <div class="card-overlay">
+      <a href="watch.html?id=${item.id}&type=${type}" class="card-play-btn" onclick="event.stopPropagation()">
+        <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </a>
+      <div class="card-title-overlay">${truncate(title,28)}</div>
+      <div class="card-year-overlay">${year}</div>
+    </div>
+  </div>`;
+}
 
-    <script>
-        (function() {
-            const TMDB_API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
-            const TMDB_BASE = "https://api.themoviedb.org/3";
-            const IMG = "https://image.tmdb.org/t/p/w342";
-            let currentTab = 'day';
+function createSliderSection(id,title,items,type){
+  return `<div class="trending-section">
+    <div class="section-header">
+      <h2 class="section-title">${title}</h2>
+      <a href="search.html?type=${type}" class="section-see-all">See All →</a>
+    </div>
+    <div class="slider-wrap" id="${id}-wrap">
+      <button class="slider-btn prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div class="slider-track-container">
+        <div class="slider-track">${items.map(i=>createCard(i,type)).join('')}</div>
+      </div>
+      <button class="slider-btn next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>`;
+}
 
-            async function fetchTMDB(endpoint, params) {
-                const url = new URL(`${TMDB_BASE}${endpoint}`);
-                url.searchParams.set('api_key', TMDB_API_KEY);
-                Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
-                const res = await fetch(url);
-                return res.ok ? res.json() : null;
-            }
+function createRankingSection(title,items,type){
+  return `<div class="trending-section">
+    <div class="section-header">
+      <h2 class="section-title">${title}</h2>
+    </div>
+    <div class="ranking-grid">
+      ${items.slice(0,12).map((item,i)=>{
+        const t=item.title||item.name||'Unknown';
+        const y=getYear(item.release_date||item.first_air_date);
+        const r=getRating(item.vote_average);
+        return `<div class="rank-card" onclick="window.location.href='movie.html?id=${item.id}&type=${type}'">
+          <div class="rank-num${i<3?' top3':''}">${i+1}</div>
+          <img class="rank-poster" src="${imgUrl(item.poster_path,'w185')}" alt="${t}" loading="lazy" onerror="this.src='https://via.placeholder.com/60x90/0f0f1a/7c3aed?text=?'">
+          <div class="rank-info">
+            <div class="rank-title">${truncate(t,28)}</div>
+            <div class="rank-meta">${y} · ${type==='tv'?'TV Show':'Movie'}</div>
+            <div class="rank-rating">⭐ ${r}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
 
-            async function loadTrending(timeWindow) {
-                const grid = document.getElementById('trendingGrid');
-                grid.innerHTML = '<div class="skeleton" style="height:200px; grid-column:1/-1;"></div>';
-                const [movies, tv] = await Promise.all([
-                    fetchTMDB(`/trending/movie/${timeWindow}`),
-                    fetchTMDB(`/trending/tv/${timeWindow}`)
-                ]);
-                const all = [...(movies?.results||[]).map(r=>({...r, media_type:'movie'})), 
-                             ...(tv?.results||[]).map(r=>({...r, media_type:'tv'}))];
-                all.sort((a,b)=> (b.vote_average||0)-(a.vote_average||0));
-                grid.innerHTML = all.slice(0,30).map((item, i)=>{
-                    const title = item.title || item.name;
-                    const year = (item.release_date||item.first_air_date||'').slice(0,4);
-                    return `
-                    <div class="rank-card" onclick="window.location='movie.html?id=${item.id}&type=${item.media_type}'">
-                        <span class="rank-number">${i+1}</span>
-                        <img src="${IMG}${item.poster_path}" alt="${title}" onerror="this.src='data:image/svg+xml,...'">
-                        <div class="card-info">
-                            <div class="title">${title}</div>
-                            <div class="meta">⭐ ${item.vote_average?.toFixed(1)} | ${year}</div>
-                        </div>
-                    </div>`;
-                }).join('');
-            }
+async function loadTrending(){
+  const content=document.getElementById('trending-content');
+  content.innerHTML=`<div style="text-align:center;padding:60px;color:var(--text2)">
+    <div style="width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--purple2);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;"></div>
+    Loading trending content…
+  </div>
+  <style>@keyframes spin{to{transform:rotate(360deg);}}</style>`;
 
-            window.switchTab = function(tab) {
-                currentTab = tab;
-                document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-                document.querySelector(`.tab-btn:${tab==='day'?'first-child':'last-child'}`).classList.add('active');
-                loadTrending(tab);
-            };
+  try{
+    const [movies,tv,topMovies,topTV]=await Promise.allSettled([
+      tmdbFetch(`/trending/movie/${currentPeriod}?`),
+      tmdbFetch(`/trending/tv/${currentPeriod}?`),
+      tmdbFetch(`/movie/top_rated?`),
+      tmdbFetch(`/tv/top_rated?`)
+    ]);
 
-            loadTrending('day');
-        })();
-    </script>
+    const movieItems=movies.value?.results||[];
+    const tvItems=tv.value?.results||[];
+    const topMovieItems=topMovies.value?.results||[];
+    const topTVItems=topTV.value?.results||[];
+
+    // Update hero
+    const hero=movieItems[0]||tvItems[0];
+    if(hero){
+      document.getElementById('hero-bg').style.backgroundImage=`url('${IMG_BASE}original${hero.backdrop_path}')`;
+      document.getElementById('hero-title').textContent=hero.title||hero.name||'';
+      document.getElementById('hero-meta').innerHTML=`⭐ ${getRating(hero.vote_average)} · ${getYear(hero.release_date||hero.first_air_date)} · ${hero.media_type==='tv'?'TV Show':'Movie'}`;
+    }
+
+    let html='';
+    if(movieItems.length) html+=createRankingSection('🏆 Top Trending Movies',movieItems,'movie');
+    if(tvItems.length) html+=createRankingSection('📺 Top Trending TV Shows',tvItems,'tv');
+    if(movieItems.length) html+=createSliderSection('t-movies','Trending Movies',movieItems,'movie');
+    if(tvItems.length) html+=createSliderSection('t-tv','Trending TV Shows',tvItems,'tv');
+    if(topMovieItems.length) html+=createSliderSection('top-movies','All-Time Top Rated Movies',topMovieItems,'movie');
+    if(topTVItems.length) html+=createSliderSection('top-tv','All-Time Top Rated TV Shows',topTVItems,'tv');
+
+    content.innerHTML=html;
+
+    // Init sliders
+    ['t-movies-wrap','t-tv-wrap','top-movies-wrap','top-tv-wrap'].forEach(createSlider);
+
+  }catch(e){
+    content.innerHTML=`<div style="text-align:center;padding:60px;color:var(--text2)">Failed to load trending content.</div>`;
+  }
+}
+
+loadTrending();
+</script>
 </body>
 </html>
