@@ -491,7 +491,7 @@ async function buildSidebar(detail, credits, recommendations) {
     html += `<div class="divider"></div>
     <div class="sidebar-section-title">Related</div>
     ${recs.map(r => `
-      <div class="sidebar-rec-item" onclick="window.location.href='movie.html?id=${r.id}&type=${MEDIA_TYPE}'">
+      <div class="sidebar-rec-item" onclick="window.location.href='info.html?id=${r.id}&type=${MEDIA_TYPE}'">
         <img class="sidebar-rec-poster" src="${imgUrl(r.poster_path,'w185')}" alt="${r.title||r.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/60x90/0f0f1a/7c3aed?text=?'">
         <div>
           <div class="sidebar-rec-title">${truncate(r.title||r.name,26)}</div>
