@@ -151,7 +151,7 @@
                 <div class="loader-ring"></div>
                 <p>Loading player...</p>
             </div>
-            <iframe class="player-iframe" id="playerFrame" src="" allowfullscreen    allow="autoplay; fullscreen; encrypted-media; picture-in-picture"> </iframe>
+            <iframe class="player-iframe" id="playerFrame" src="" allowfullscreen allow="autoplay; fullscreen; encrypted-media; picture-in-picture" ></iframe>
         </div>
         <div class="player-controls">
             <div class="server-group">
@@ -251,21 +251,12 @@
         },100);
     }
 
-function switchServer(server) {
-    currentServer = server;
-
-    document.querySelectorAll('.server-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    if (server === 'vidstorm') {
-        document.getElementById('srvVidStorm').classList.add('active');
-    } else if (server === 'vidrock') {
-        document.getElementById('srvVidRock').classList.add('active');
+    function switchServer(server){
+        currentServer=server;
+        document.querySelectorAll('.server-btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById('srv'+server.charAt(0).toUpperCase()+server.slice(1)).classList.add('active');
+        loadPlayer();
     }
-
-    loadPlayer();
-}
 
     function toggleTheater(){
         document.getElementById('playerWrapper').classList.toggle('theater');
