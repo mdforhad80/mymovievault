@@ -1,168 +1,550 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch - CineStream</title>
-    <style>
-        :root {
-            --bg:#0a0a0a; --bg2:#111; --glass:rgba(20,20,20,0.75); --border:rgba(255,255,255,0.06);
-            --text:#e0e0e0; --text2:#aaa; --accent:#8b5cf6; --accent2:#a78bfa; --radius:14px;
-            --transition:0.3s; --header-h:64px;
-        }
-        *{box-sizing:border-box; margin:0; padding:0;}
-        body{background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh;}
-        a{color:inherit; text-decoration:none;}
-        button{cursor:pointer; border:none; outline:none; font-family:inherit;}
-        .header{position:sticky; top:0; z-index:100; background:rgba(10,10,10,0.9); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); height:var(--header-h); display:flex; align-items:center; padding:0 20px; gap:12px;}
-        .logo{font-size:1.4rem; font-weight:800; background:linear-gradient(135deg,#fff,var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-right:auto;}
-        .btn{padding:8px 16px; border-radius:20px; background:var(--glass); border:1px solid var(--border); color:#fff; font-size:0.85rem; transition:var(--transition);}
-        .btn.active{background:var(--accent); border-color:var(--accent);}
-        .watch-container{display:flex; flex-wrap:wrap; gap:20px; padding:20px 3%; max-width:1400px; margin:0 auto;}
-        .player-wrapper{flex:1 1 75%; min-width:300px; aspect-ratio:16/9; background:#000; border-radius:var(--radius); overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.5);}
-        .player-wrapper iframe{width:100%; height:100%; border:none;}
-        .watch-sidebar{flex:1 1 22%; min-width:260px; background:var(--bg2); border-radius:var(--radius); padding:16px; border:1px solid var(--border);}
-        .server-selector{display:flex; gap:8px; margin:10px 0;}
-        .episode-grid{display:flex; flex-wrap:wrap; gap:6px; max-height:200px; overflow-y:auto;}
-        .episode-btn{width:40px; height:36px; border-radius:6px; background:var(--glass); border:1px solid var(--border); color:#fff; font-size:0.8rem;}
-        .episode-btn.active{background:var(--accent);}
-        .section-title{font-weight:700; margin:12px 0 6px;}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StreamVault — Watch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050508; --bg2: #0a0a12; --bg3: #0f0f1a;
+  --glass: rgba(255,255,255,0.04); --glass2: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.08);
+  --purple: #7c3aed; --purple2: #a855f7; --blue: #2563eb;
+  --neon: #c084fc; --neon2: #818cf8;
+  --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b;
+  --gold: #fbbf24;
+  --radius: 12px; --radius2: 20px;
+  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+::-webkit-scrollbar { width: 6px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 3px; }
+
+/* HEADER */
+#header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 60px; display: flex; align-items: center;
+  padding: 0 20px; gap: 16px;
+  background: rgba(5,5,8,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.header-logo {
+  font-family: 'Bebas Neue', sans-serif; font-size: 24px;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--neon), var(--neon2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.header-back {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--text2); font-size: 14px;
+  padding: 6px 14px; border-radius: 8px;
+  background: var(--glass2); border: 1px solid var(--border);
+  transition: var(--transition);
+}
+.header-back:hover { color: var(--text); }
+.header-back svg { width: 15px; height: 15px; }
+.header-title { font-size: 15px; font-weight: 600; color: var(--text2); flex: 1; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* LAYOUT */
+#watch-layout {
+  padding-top: 60px;
+  display: flex; gap: 0;
+  min-height: 100vh;
+}
+#player-section {
+  flex: 1; min-width: 0;
+  padding: 20px;
+}
+#sidebar-section {
+  width: 360px; flex-shrink: 0;
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(100vh - 60px);
+  position: sticky; top: 60px;
+}
+
+/* PLAYER */
+.player-wrap {
+  position: relative;
+  background: #000;
+  border-radius: var(--radius2);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), var(--glow);
+  --glow: 0 0 40px rgba(124,58,237,0.15);
+  aspect-ratio: 16/9;
+  width: 100%;
+}
+#player-iframe {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+.player-loader {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg);
+  flex-direction: column; gap: 16px;
+}
+.loader-spinner {
+  width: 50px; height: 50px;
+  border: 3px solid var(--border);
+  border-top-color: var(--purple2);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-text { color: var(--text2); font-size: 14px; }
+
+/* CONTROLS AREA */
+.player-controls-wrap {
+  margin-top: 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  padding: 20px;
+}
+.controls-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.media-title-watch { font-size: 18px; font-weight: 700; }
+.media-sub-watch { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+/* SERVER SELECTOR */
+.selector-label { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.server-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.server-btn {
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  background: var(--glass2); border: 1px solid var(--border);
+  color: var(--text2); transition: var(--transition); cursor: pointer;
+}
+.server-btn.active { background: var(--purple); border-color: var(--purple); color: white; }
+.server-btn:hover:not(.active) { color: var(--text); background: var(--glass2); }
+
+/* EPISODE CONTROLS */
+.episode-selectors { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.ep-select-wrap { display: flex; flex-direction: column; gap: 4px; }
+.ep-select {
+  padding: 8px 14px; border-radius: 8px;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text); font-size: 14px; font-family: 'Outfit', sans-serif;
+  outline: none; cursor: pointer; min-width: 140px;
+  transition: var(--transition);
+}
+.ep-select:focus { border-color: var(--purple2); }
+.ep-nav-btns { display: flex; gap: 8px; margin-bottom: 16px; }
+.ep-nav-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 18px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 600;
+  background: var(--glass2); border: 1px solid var(--border);
+  color: var(--text2); transition: var(--transition);
+}
+.ep-nav-btn:hover { background: var(--purple); border-color: var(--purple); color: white; }
+.ep-nav-btn:disabled { opacity: 0.4; pointer-events: none; }
+.ep-nav-btn svg { width: 15px; height: 15px; }
+
+/* THEATER MODE */
+#watch-layout.theater #sidebar-section { display: none; }
+#watch-layout.theater #player-section { padding: 0; }
+#watch-layout.theater .player-wrap { border-radius: 0; border: none; aspect-ratio: auto; height: calc(100vh - 60px - 80px); }
+.theater-toggle {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  background: var(--glass2); border: 1px solid var(--border);
+  color: var(--text2); transition: var(--transition);
+}
+.theater-toggle:hover { color: var(--text); background: var(--glass2); }
+.theater-toggle svg { width: 16px; height: 16px; }
+
+/* SHORTCUTS */
+.shortcuts-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.shortcut-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text3); }
+.kbd { padding: 2px 7px; border-radius: 4px; background: var(--bg2); border: 1px solid var(--border); font-size: 11px; font-family: monospace; }
+
+/* SIDEBAR CONTENT */
+.sidebar-section-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 20px;
+  letter-spacing: 1.5px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.sidebar-section-title::before {
+  content: ''; width: 3px; height: 18px; border-radius: 2px;
+  background: linear-gradient(to bottom, var(--purple2), var(--neon2));
+}
+
+/* CAST SIDEBAR */
+.sidebar-cast-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px; border-radius: 8px; transition: var(--transition);
+  margin-bottom: 4px;
+}
+.sidebar-cast-item:hover { background: var(--glass2); }
+.sidebar-cast-photo {
+  width: 44px; height: 44px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+}
+.sidebar-cast-name { font-size: 13px; font-weight: 600; }
+.sidebar-cast-char { font-size: 12px; color: var(--text3); }
+
+/* SIDEBAR RECOMMENDATIONS */
+.sidebar-rec-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px; border-radius: 10px;
+  cursor: pointer; transition: var(--transition);
+  margin-bottom: 4px;
+}
+.sidebar-rec-item:hover { background: var(--glass2); }
+.sidebar-rec-poster {
+  width: 60px; height: 90px; border-radius: 6px;
+  object-fit: cover; flex-shrink: 0;
+  background: var(--bg3); border: 1px solid var(--border);
+}
+.sidebar-rec-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.sidebar-rec-meta { font-size: 12px; color: var(--text2); }
+
+.divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+/* RATINGS */
+.rating-display {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--glass2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.rating-icon { font-size: 24px; }
+.rating-info { flex: 1; }
+.rating-info .r-label { font-size: 11px; color: var(--text3); }
+.rating-info .r-val { font-size: 22px; font-weight: 700; color: var(--gold); font-family: 'Bebas Neue', sans-serif; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  #watch-layout { flex-direction: column; }
+  #sidebar-section { width: 100%; max-height: none; position: static; border-left: none; border-top: 1px solid var(--border); }
+}
+@media (max-width: 768px) {
+  #player-section { padding: 12px; }
+  #sidebar-section { padding: 16px; }
+  .player-controls-wrap { padding: 16px; }
+}
+</style>
 </head>
 <body>
-    <header class="header">
-        <a href="index.html" class="logo">CineStream</a>
-        <a href="javascript:history.back()" class="btn">← Back</a>
-    </header>
 
-    <div id="watchApp">
-        <div class="player-wrapper skeleton" style="aspect-ratio:16/9;"></div>
+<header id="header">
+  <a href="javascript:history.back()" class="header-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Back
+  </a>
+  <div class="header-title" id="header-title">Loading…</div>
+  <a href="index.html" class="header-logo">StreamVault</a>
+</header>
+
+<div id="watch-layout">
+  <section id="player-section">
+    <div class="player-wrap">
+      <div class="player-loader" id="player-loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading player…</div>
+      </div>
+      <iframe id="player-iframe" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" onload="onPlayerLoad()"></iframe>
     </div>
 
-    <script>
-        (function() {
-            const TMDB_API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
-            const TMDB_BASE = "https://api.themoviedb.org/3";
-            const VIDSTORM_MOVIE = "https://vidstorm.ru/movie/";
-            const VIDROCK_MOVIE = "https://vidrock.ru/movie/";
-            const VIDSTORM_TV = "https://vidstorm.ru/tv/";
-            const VIDROCK_TV = "https://vidrock.ru/tv/";
+    <div class="player-controls-wrap">
+      <div class="controls-header">
+        <div>
+          <div class="media-title-watch" id="ctrl-title">—</div>
+          <div class="media-sub-watch" id="ctrl-sub">—</div>
+        </div>
+        <button class="theater-toggle" onclick="toggleTheater()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
+          Theater
+        </button>
+      </div>
 
-            async function fetchTMDB(endpoint, params = {}) {
-                const url = new URL(`${TMDB_BASE}${endpoint}`);
-                url.searchParams.set('api_key', TMDB_API_KEY);
-                Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
-                const res = await fetch(url);
-                return res.ok ? res.json() : null;
-            }
+      <div class="selector-label">Server</div>
+      <div class="server-btns" id="server-btns">
+        <button class="server-btn active" onclick="switchServer('vidstorm')">VidStorm</button>
+        <button class="server-btn" onclick="switchServer('vidrock')">VidRock</button>
+      </div>
 
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id');
-            const type = params.get('type') || 'movie';
-            let season = parseInt(params.get('season')) || 1;
-            let episode = parseInt(params.get('episode')) || 1;
-            let currentServer = 'vidstorm';
+      <div id="tv-controls" style="display:none">
+        <div class="episode-selectors">
+          <div class="ep-select-wrap">
+            <div class="selector-label">Season</div>
+            <select class="ep-select" id="season-select" onchange="onSeasonChange()"></select>
+          </div>
+          <div class="ep-select-wrap">
+            <div class="selector-label">Episode</div>
+            <select class="ep-select" id="episode-select" onchange="onEpisodeChange()"></select>
+          </div>
+        </div>
+        <div class="ep-nav-btns">
+          <button class="ep-nav-btn" id="prev-ep-btn" onclick="prevEpisode()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Previous
+          </button>
+          <button class="ep-nav-btn" id="next-ep-btn" onclick="nextEpisode()">
+            Next
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
 
-            const app = document.getElementById('watchApp');
+      <div class="shortcuts-row">
+        <div class="shortcut-item"><span class="kbd">F</span> Fullscreen</div>
+        <div class="shortcut-item"><span class="kbd">T</span> Theater</div>
+        <div class="shortcut-item"><span class="kbd">N</span> Next Ep.</div>
+        <div class="shortcut-item"><span class="kbd">P</span> Prev Ep.</div>
+        <div class="shortcut-item"><span class="kbd">Esc</span> Exit</div>
+      </div>
+    </div>
+  </section>
 
-            function getEmbedUrl() {
-                if(type==='movie') {
-                    return currentServer==='vidstorm' ? `${VIDSTORM_MOVIE}${id}` : `${VIDROCK_MOVIE}${id}`;
-                } else {
-                    return currentServer==='vidstorm' ? `${VIDSTORM_TV}${id}/${season}/${episode}` : `${VIDROCK_TV}${id}/${season}/${episode}`;
-                }
-            }
+  <aside id="sidebar-section">
+    <div id="sidebar-content">
+      <div style="color:var(--text2);text-align:center;padding:40px">Loading…</div>
+    </div>
+  </aside>
+</div>
 
-            function renderPlayer() {
-                const embed = getEmbedUrl();
-                return `
-                <div class="player-wrapper">
-                    <iframe src="${embed}" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-                </div>
-                <div class="player-controls">
-                    <span>Server:</span>
-                    <button class="btn server-btn ${currentServer==='vidstorm'?'active':''}" onclick="switchServer('vidstorm')">VidStorm</button>
-                    <button class="btn server-btn ${currentServer==='vidrock'?'active':''}" onclick="switchServer('vidrock')">VidRock</button>
-                    <button class="btn" onclick="toggleTheater()">🎭 Theater</button>
-                    <button class="btn" onclick="document.querySelector('.player-wrapper iframe')?.requestFullscreen()">⛶ Fullscreen</button>
-                </div>`;
-            }
+<script>
+const TMDB_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
+const TMDB_BASE = "https://api.themoviedb.org/3";
+const IMG_BASE = "https://image.tmdb.org/t/p/";
 
-            async function loadWatch() {
-                if(!id) { app.innerHTML='<p>Missing content ID.</p>'; return; }
-                const data = await fetchTMDB(`/${type}/${id}`);
-                if(!data) { app.innerHTML='<p>Failed to load.</p>'; return; }
-                const title = data.title || data.name;
-                document.title = `Watching: ${title}`;
+const params = new URLSearchParams(window.location.search);
+const MEDIA_ID = params.get('id');
+const MEDIA_TYPE = params.get('type') || 'movie';
+let currentSeason = parseInt(params.get('season') || '1');
+let currentEpisode = parseInt(params.get('episode') || '1');
+let currentServer = 'vidstorm';
+let totalSeasons = 1;
+let episodeData = {};
+let mediaDetail = null;
 
-                let sidebarHTML = `<h3>${title}</h3>`;
-                if(type==='tv') {
-                    const seasons = data.number_of_seasons || 1;
-                    sidebarHTML += `<div><label>Season: </label><select id="seasonSelect" onchange="changeSeason(this.value)">`;
-                    for(let s=1; s<=seasons; s++) sidebarHTML += `<option value="${s}" ${s===season?'selected':''}>Season ${s}</option>`;
-                    sidebarHTML += `</select></div>`;
-                    sidebarHTML += `<div class="section-title">Episodes</div><div class="episode-grid" id="episodeGrid">Loading...</div>`;
-                }
-                sidebarHTML += `<div class="section-title">Keyboard: ← → prev/next episode</div>`;
+async function tmdbFetch(endpoint, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      const res = await fetch(`${TMDB_BASE}${endpoint}&api_key=${TMDB_KEY}`, { signal: controller.signal });
+      clearTimeout(timeout);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (e) {
+      if (i === retries - 1) throw e;
+      await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+    }
+  }
+}
 
-                app.innerHTML = renderPlayer() + `<div class="watch-container"><div class="watch-sidebar">${sidebarHTML}</div></div>`;
+function imgUrl(p, s='w342') { return p ? `${IMG_BASE}${s}${p}` : 'https://via.placeholder.com/60x90/0f0f1a/7c3aed?text=?'; }
+function getRating(r) { return r ? r.toFixed(1) : 'N/A'; }
+function getYear(d) { return d ? d.slice(0,4) : ''; }
+function truncate(s, n) { return s && s.length > n ? s.slice(0,n)+'…' : (s||''); }
 
-                if(type==='tv') {
-                    loadEpisodes();
-                }
+function getEmbedUrl() {
+  const base = currentServer === 'vidstorm' ? 'https://vidstorm.ru' : 'https://vidrock.ru';
+  if (MEDIA_TYPE === 'movie') return `${base}/movie/${MEDIA_ID}`;
+  return `${base}/tv/${MEDIA_ID}/${currentSeason}/${currentEpisode}`;
+}
 
-                // Keyboard shortcuts
-                document.addEventListener('keydown', (e) => {
-                    if(e.key==='ArrowRight') nextEpisode();
-                    if(e.key==='ArrowLeft') prevEpisode();
-                });
-            }
+function loadPlayer() {
+  document.getElementById('player-loader').style.display = 'flex';
+  document.getElementById('player-iframe').src = getEmbedUrl();
+  updateSubtitle();
+  updateNavBtns();
+}
 
-            async function loadEpisodes() {
-                const seasonData = await fetchTMDB(`/tv/${id}/season/${season}`);
-                const episodes = seasonData?.episodes || [];
-                const grid = document.getElementById('episodeGrid');
-                if(grid) {
-                    grid.innerHTML = episodes.map(ep=>`
-                        <button class="episode-btn ${ep.episode_number===episode?'active':''}" 
-                                onclick="changeEpisode(${ep.episode_number})">${ep.episode_number}</button>
-                    `).join('');
-                }
-            }
+function onPlayerLoad() {
+  setTimeout(() => {
+    document.getElementById('player-loader').style.display = 'none';
+  }, 800);
+}
 
-            window.switchServer = function(server) {
-                currentServer = server;
-                const playerDiv = document.querySelector('.player-wrapper');
-                if(playerDiv) playerDiv.outerHTML = renderPlayer().match(/<div class="player-wrapper">.*?<\/div>/s)[0];
-                document.querySelectorAll('.server-btn').forEach(b=>b.classList.remove('active'));
-                document.querySelector(`.server-btn.${server}`)?.classList.add('active');
-            };
-            window.changeSeason = function(s) {
-                season = parseInt(s);
-                episode = 1;
-                loadWatch();
-            };
-            window.changeEpisode = function(ep) {
-                episode = ep;
-                const playerDiv = document.querySelector('.player-wrapper');
-                if(playerDiv) playerDiv.outerHTML = renderPlayer().match(/<div class="player-wrapper">.*?<\/div>/s)[0];
-                document.querySelectorAll('.episode-btn').forEach(b=>b.classList.remove('active'));
-                document.querySelector(`.episode-btn:nth-child(${ep})`)?.classList.add('active');
-            };
-            window.nextEpisode = function() {
-                if(type!=='tv') return;
-                changeEpisode(episode+1);
-            };
-            window.prevEpisode = function() {
-                if(type!=='tv' || episode<=1) return;
-                changeEpisode(episode-1);
-            };
-            window.toggleTheater = function() {
-                document.querySelector('.watch-container')?.classList.toggle('theater-mode');
-            };
+function updateSubtitle() {
+  const el = document.getElementById('ctrl-sub');
+  if (MEDIA_TYPE === 'tv') {
+    el.textContent = `Season ${currentSeason} · Episode ${currentEpisode} · ${currentServer === 'vidstorm' ? 'VidStorm' : 'VidRock'}`;
+  } else {
+    el.textContent = currentServer === 'vidstorm' ? 'VidStorm' : 'VidRock';
+  }
+}
 
-            loadWatch();
-        })();
-    </script>
+function switchServer(server) {
+  currentServer = server;
+  document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  loadPlayer();
+}
+
+async function onSeasonChange() {
+  currentSeason = parseInt(document.getElementById('season-select').value);
+  currentEpisode = 1;
+  await loadEpisodeOptions();
+  loadPlayer();
+}
+
+function onEpisodeChange() {
+  currentEpisode = parseInt(document.getElementById('episode-select').value);
+  loadPlayer();
+}
+
+function prevEpisode() {
+  if (currentEpisode > 1) { currentEpisode--; }
+  else if (currentSeason > 1) { currentSeason--; currentEpisode = episodeData[currentSeason]?.length || 1; document.getElementById('season-select').value = currentSeason; loadEpisodeOptions(); }
+  loadPlayer();
+}
+
+function nextEpisode() {
+  const epCount = episodeData[currentSeason]?.length || 1;
+  if (currentEpisode < epCount) { currentEpisode++; }
+  else if (currentSeason < totalSeasons) { currentSeason++; currentEpisode = 1; document.getElementById('season-select').value = currentSeason; loadEpisodeOptions(); }
+  loadPlayer();
+}
+
+function updateNavBtns() {
+  const prevBtn = document.getElementById('prev-ep-btn');
+  const nextBtn = document.getElementById('next-ep-btn');
+  if (!prevBtn || !nextBtn) return;
+  prevBtn.disabled = currentSeason === 1 && currentEpisode === 1;
+  const epCount = episodeData[currentSeason]?.length || 1;
+  nextBtn.disabled = currentSeason >= totalSeasons && currentEpisode >= epCount;
+}
+
+async function loadEpisodeOptions() {
+  const epSelect = document.getElementById('episode-select');
+  if (!epSelect) return;
+  if (!episodeData[currentSeason]) {
+    try {
+      const data = await tmdbFetch(`/tv/${MEDIA_ID}/season/${currentSeason}?`);
+      episodeData[currentSeason] = data.episodes || [];
+    } catch { episodeData[currentSeason] = []; }
+  }
+  const eps = episodeData[currentSeason];
+  epSelect.innerHTML = eps.map(ep => `<option value="${ep.episode_number}" ${ep.episode_number === currentEpisode ? 'selected' : ''}>Ep. ${ep.episode_number} - ${truncate(ep.name, 30)}</option>`).join('');
+  updateNavBtns();
+}
+
+function toggleTheater() {
+  document.getElementById('watch-layout').classList.toggle('theater');
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.key === 'f' || e.key === 'F') { document.getElementById('player-iframe').requestFullscreen?.(); }
+  if (e.key === 't' || e.key === 'T') { toggleTheater(); }
+  if (e.key === 'n' || e.key === 'N') { if (MEDIA_TYPE === 'tv') nextEpisode(); }
+  if (e.key === 'p' || e.key === 'P') { if (MEDIA_TYPE === 'tv') prevEpisode(); }
+});
+
+async function buildSidebar(detail, credits, recommendations) {
+  const cast = (credits?.cast || []).slice(0, 12);
+  const recs = (recommendations?.results || []).slice(0, 15);
+  const rating = getRating(detail?.vote_average);
+  const votes = detail?.vote_count?.toLocaleString() || '0';
+
+  let html = '';
+
+  // Rating
+  html += `<div class="sidebar-section-title">Ratings</div>
+  <div class="rating-display">
+    <div class="rating-icon">⭐</div>
+    <div class="rating-info">
+      <div class="r-label">TMDB Score</div>
+      <div class="r-val">${rating}<span style="font-size:16px;color:var(--text3)">/10</span></div>
+    </div>
+    <div style="font-size:12px;color:var(--text3)">${votes} votes</div>
+  </div>`;
+
+  // Cast
+  if (cast.length) {
+    html += `<div class="divider"></div>
+    <div class="sidebar-section-title">Cast</div>
+    ${cast.map(c => `
+      <div class="sidebar-cast-item">
+        <img class="sidebar-cast-photo" src="${imgUrl(c.profile_path,'w185')}" alt="${c.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/44x44/0f0f1a/7c3aed?text=?'">
+        <div>
+          <div class="sidebar-cast-name">${c.name}</div>
+          <div class="sidebar-cast-char">${truncate(c.character,20)}</div>
+        </div>
+      </div>`).join('')}`;
+  }
+
+  // Recommendations
+  if (recs.length) {
+    html += `<div class="divider"></div>
+    <div class="sidebar-section-title">Related</div>
+    ${recs.map(r => `
+      <div class="sidebar-rec-item" onclick="window.location.href='movie.html?id=${r.id}&type=${MEDIA_TYPE}'">
+        <img class="sidebar-rec-poster" src="${imgUrl(r.poster_path,'w185')}" alt="${r.title||r.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/60x90/0f0f1a/7c3aed?text=?'">
+        <div>
+          <div class="sidebar-rec-title">${truncate(r.title||r.name,26)}</div>
+          <div class="sidebar-rec-meta">⭐ ${getRating(r.vote_average)} · ${getYear(r.release_date||r.first_air_date)}</div>
+          <a href="watch.html?id=${r.id}&type=${MEDIA_TYPE}" style="font-size:12px;color:var(--purple2);margin-top:4px;display:block">▶ Watch</a>
+        </div>
+      </div>`).join('')}`;
+  }
+
+  document.getElementById('sidebar-content').innerHTML = html;
+}
+
+async function init() {
+  if (!MEDIA_ID) { document.getElementById('ctrl-title').textContent = 'No content specified'; return; }
+
+  // Load player immediately
+  loadPlayer();
+
+  // Setup TV controls
+  if (MEDIA_TYPE === 'tv') {
+    document.getElementById('tv-controls').style.display = 'block';
+  }
+
+  // Fetch data in parallel
+  const [detail, credits, recommendations] = await Promise.allSettled([
+    tmdbFetch(`/${MEDIA_TYPE}/${MEDIA_ID}?`),
+    tmdbFetch(`/${MEDIA_TYPE}/${MEDIA_ID}/credits?`),
+    tmdbFetch(`/${MEDIA_TYPE}/${MEDIA_ID}/recommendations?`)
+  ]);
+
+  const d = detail.value;
+  if (!d) return;
+
+  mediaDetail = d;
+  const title = d.title || d.name || 'Unknown';
+  document.title = `${title} — StreamVault`;
+  document.getElementById('header-title').textContent = title;
+  document.getElementById('ctrl-title').textContent = title;
+  updateSubtitle();
+
+  // TV Setup
+  if (MEDIA_TYPE === 'tv') {
+    totalSeasons = d.number_of_seasons || 1;
+    const seasonSelect = document.getElementById('season-select');
+    seasonSelect.innerHTML = Array.from({length:totalSeasons},(_,i) => `<option value="${i+1}" ${i+1===currentSeason?'selected':''}>Season ${i+1}</option>`).join('');
+    await loadEpisodeOptions();
+  }
+
+  // Sidebar
+  await buildSidebar(d, credits.value, recommendations.value);
+}
+
+init();
+</script>
 </body>
 </html>
