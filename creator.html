@@ -3,85 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineVerse - Creator</title>
+    <title>Creator - CineStream</title>
     <style>
         :root {
-            --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a28;
-            --accent: #7c3aed; --accent2: #a855f7; --text: #e2e8f0; --text2: #a0aec0;
-            --radius: 16px; --transition: 0.3s ease;
-            --font: 'Segoe UI', system-ui, sans-serif;
+            --bg:#0a0a0a; --bg2:#111; --glass:rgba(20,20,20,0.75); --border:rgba(255,255,255,0.06);
+            --text:#e0e0e0; --accent:#8b5cf6; --radius:14px;
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:var(--bg); color:var(--text); font-family:var(--font); line-height:1.7; }
-        .header {
-            padding:20px 24px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.05);
-        }
-        .logo { font-size:2rem; font-weight:800; background:linear-gradient(135deg,var(--accent2),var(--neon)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        .container { max-width:900px; margin:0 auto; padding:30px 20px; }
-        .card {
-            background:var(--surface2); border-radius:var(--radius); padding:24px; margin-bottom:20px;
-            border:1px solid rgba(255,255,255,0.05);
-        }
-        h2 { color:var(--accent2); margin-bottom:12px; }
-        a { color:var(--neon); text-decoration:none; }
-        .btn {
-            display:inline-block; background:var(--accent); color:#fff; padding:12px 24px; border-radius:50px;
-            font-weight:600; transition:var(--transition); margin:6px;
-        }
-        .btn:hover { background:var(--accent2); transform:translateY(-2px); }
-        .social-links { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
-        code { background:var(--surface3); padding:2px 8px; border-radius:4px; font-size:0.9rem; }
-        pre { background:var(--surface3); padding:16px; border-radius:8px; overflow-x:auto; }
+        *{box-sizing:border-box; margin:0; padding:0;}
+        body{background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; text-align:center;}
+        .header{padding:20px;}
+        .logo{font-size:2rem; font-weight:800; background:linear-gradient(135deg,#fff,var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;}
+        .creator-section{max-width:700px; margin:20px auto; padding:0 5%;}
+        .avatar{width:100px; height:100px; border-radius:50%; background:var(--accent); margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:2.5rem;}
+        h1{margin-bottom:10px;}
+        .social-links{display:flex; justify-content:center; gap:15px; margin:20px 0;}
+        .social-links a{width:45px; height:45px; border-radius:50%; background:var(--glass); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:1.2rem; transition:0.3s;}
+        .social-links a:hover{background:var(--accent);}
+        .deploy-guide{background:var(--bg2); border-radius:var(--radius); padding:20px; text-align:left; margin:20px 0; border:1px solid var(--border);}
+        .deploy-guide h3{color:var(--accent); margin-bottom:8px;}
+        code{background:#000; padding:4px 8px; border-radius:4px; display:block; margin:6px 0; word-break:break-all; font-size:0.9rem;}
+        .btn{display:inline-block; background:var(--accent); color:#fff; padding:10px 22px; border-radius:30px; text-decoration:none; margin-top:10px;}
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">CineVerse Creator</div>
-        <p style="color:var(--text2);">Premium Streaming Platform by You</p>
+        <a href="index.html" class="logo">CineStream</a>
     </div>
-    <div class="container">
-        <div class="card">
-            <h2>👤 Developer Profile</h2>
-            <p>Built with passion for cinematic web experiences. This project showcases a fully functional streaming frontend using only vanilla HTML, CSS, and JavaScript.</p>
-            <div class="social-links">
-                <a href="#" class="btn">GitHub</a>
-                <a href="#" class="btn">Twitter</a>
-                <a href="#" class="btn">Portfolio</a>
-            </div>
+    <div class="creator-section">
+        <div class="avatar">🎬</div>
+        <h1>About the Developer</h1>
+        <p>This premium streaming template was built with vanilla HTML, CSS, and JavaScript, powered by the TMDB API. No frameworks – just clean, cinematic code.</p>
+        <div class="social-links">
+            <a href="#" title="GitHub">🐙</a>
+            <a href="#" title="Twitter">𝕏</a>
+            <a href="#" title="Portfolio">🌐</a>
         </div>
-        <div class="card" id="deploy">
-            <h2>🚀 Deploy to GitHub Pages</h2>
-            <ol>
-                <li>Create a GitHub repository and upload all HTML files.</li>
-                <li>Go to <strong>Settings → Pages</strong>.</li>
-                <li>Select branch <code>main</code> and folder <code>/root</code>.</li>
-                <li>Your site will be live at <code>https://yourusername.github.io/repo-name/</code>.</li>
-            </ol>
+
+        <div class="deploy-guide">
+            <h3>🚀 Deploy to GitHub Pages</h3>
+            <code>1. Upload all .html files to a GitHub repository.</code>
+            <code>2. Go to Settings → Pages → Source: Deploy from a branch → main → / (root).</code>
+            <code>3. Save – your site will be live at <strong>https://yourusername.github.io/repo-name</strong></code>
         </div>
-        <div class="card">
-            <h2>☁️ Deploy to Cloudflare Pages</h2>
-            <ol>
-                <li>Connect your GitHub repository to Cloudflare Pages.</li>
-                <li>Set build command: <code>none</code> (static site).</li>
-                <li>Set output directory: <code>/</code>.</li>
-                <li>Deploy – instant global CDN.</li>
-            </ol>
+        <div class="deploy-guide">
+            <h3>☁️ Deploy to Cloudflare Pages</h3>
+            <code>1. Connect your GitHub repository to Cloudflare Pages.</code>
+            <code>2. Set build command: (leave empty), output directory: / (root).</code>
+            <code>3. Deploy – instantly live with a *.pages.dev domain.</code>
         </div>
-        <div class="card" id="features">
-            <h2>✨ Features</h2>
-            <ul>
-                <li>TMDB API integration for movies & TV</li>
-                <li>Multiple streaming embeds (VidPlus, VidStorm, VidRock)</li>
-                <li>Cinematic hero slider, search overlay, responsive grid</li>
-                <li>Detail pages, watch page with server switching</li>
-                <li>Advanced search with filters, trending discovery</li>
-                <li>No frameworks – pure HTML/CSS/JS</li>
-            </ul>
-        </div>
-        <div class="card">
-            <h2>📬 Contact</h2>
-            <p>For collaboration or feedback, reach out via <a href="mailto:dev@example.com">dev@example.com</a></p>
-        </div>
+        <a href="index.html" class="btn">← Back to Home</a>
     </div>
 </body>
 </html>
