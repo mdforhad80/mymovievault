@@ -1,122 +1,433 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search - CineStream</title>
-    <style>
-        :root {
-            --bg:#0a0a0a; --bg2:#111; --glass:rgba(20,20,20,0.75); --border:rgba(255,255,255,0.06);
-            --text:#e0e0e0; --accent:#8b5cf6; --radius:14px; --transition:0.3s;
-        }
-        *{box-sizing:border-box; margin:0; padding:0;}
-        body{background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif;}
-        .header{position:sticky; top:0; background:rgba(10,10,10,0.9); backdrop-filter:blur(20px); padding:12px 5%; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border);}
-        .logo{font-size:1.5rem; font-weight:800; background:linear-gradient(135deg,#fff,var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-right:auto;}
-        .filter-bar{display:flex; gap:10px; flex-wrap:wrap; padding:16px 5%;}
-        select,input{background:var(--glass); border:1px solid var(--border); color:#fff; padding:10px 14px; border-radius:20px; font-size:0.9rem; outline:none;}
-        .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:14px; padding:0 5% 30px;}
-        .card{border-radius:var(--radius); overflow:hidden; background:var(--bg2); transition:var(--transition); cursor:pointer; border:1px solid transparent;}
-        .card:hover{transform:translateY(-6px); border-color:var(--accent);}
-        .card img{width:100%; aspect-ratio:2/3; object-fit:cover;}
-        .card .title{font-size:0.85rem; padding:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-        .load-more{text-align:center; padding:20px;}
-        .btn{background:var(--accent); color:#fff; padding:12px 28px; border-radius:30px; border:none; font-weight:600; cursor:pointer;}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StreamVault — Search</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#050508;--bg2:#0a0a12;--bg3:#0f0f1a;
+  --glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.08);
+  --purple:#7c3aed;--purple2:#a855f7;--blue:#2563eb;
+  --neon:#c084fc;--neon2:#818cf8;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --gold:#fbbf24;
+  --radius:12px;--radius2:20px;
+  --transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;}
+img{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--purple);border-radius:3px;}
+
+/* HEADER */
+#header{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:70px;display:flex;align-items:center;
+  padding:0 24px;gap:16px;
+  background:rgba(5,5,8,0.95);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.header-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;
+  background:linear-gradient(135deg,var(--neon),var(--neon2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.header-spacer{flex:1;}
+.header-back{
+  display:flex;align-items:center;gap:6px;
+  color:var(--text2);font-size:14px;
+  padding:6px 14px;border-radius:8px;
+  background:var(--glass2);border:1px solid var(--border);
+  transition:var(--transition);
+}
+.header-back:hover{color:var(--text);}
+.header-back svg{width:15px;height:15px;}
+
+/* SEARCH HERO */
+.search-hero{
+  padding:120px 24px 48px;
+  text-align:center;
+  background:linear-gradient(to bottom,rgba(124,58,237,0.08) 0%,transparent 100%);
+}
+.search-hero h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,6vw,72px);
+  letter-spacing:3px;margin-bottom:8px;
+  background:linear-gradient(135deg,var(--text),var(--text2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.search-hero p{color:var(--text2);font-size:16px;margin-bottom:32px;}
+.search-bar-wrap{max-width:700px;margin:0 auto;position:relative;}
+.search-bar-wrap svg{
+  position:absolute;left:20px;top:50%;transform:translateY(-50%);
+  width:22px;height:22px;color:var(--text3);
+}
+#main-search-input{
+  width:100%;padding:18px 60px 18px 56px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius2);color:var(--text);
+  font-size:18px;outline:none;transition:var(--transition);
+}
+#main-search-input:focus{border-color:var(--purple2);box-shadow:0 0 0 3px rgba(168,85,247,0.15);}
+#main-search-input::placeholder{color:var(--text3);}
+.search-clear{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  border-radius:8px;color:var(--text2);transition:var(--transition);
+}
+.search-clear:hover{background:var(--glass2);color:var(--text);}
+
+/* FILTERS */
+.filters-bar{
+  max-width:1400px;margin:0 auto;
+  padding:0 24px 32px;
+  display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+}
+.filter-group{display:flex;align-items:center;gap:6px;}
+.filter-label{font-size:12px;color:var(--text3);font-weight:600;white-space:nowrap;}
+.filter-select{
+  padding:8px 14px;border-radius:20px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);font-size:13px;font-family:'Outfit',sans-serif;
+  outline:none;cursor:pointer;transition:var(--transition);
+}
+.filter-select:focus{border-color:var(--purple2);}
+.filter-btn{
+  padding:8px 18px;border-radius:20px;
+  font-size:13px;font-weight:600;
+  background:var(--glass2);border:1px solid var(--border);
+  color:var(--text2);transition:var(--transition);
+}
+.filter-btn.active{background:var(--purple);border-color:var(--purple);color:white;}
+.filter-btn:hover:not(.active){color:var(--text);}
+
+/* RESULTS */
+.results-section{max-width:1400px;margin:0 auto;padding:0 24px 60px;}
+.results-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;
+}
+.results-count{font-size:14px;color:var(--text2);}
+.results-count span{color:var(--purple2);font-weight:600;}
+.results-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:20px;
+}
+.result-card{
+  cursor:pointer;position:relative;
+  transition:var(--transition);border-radius:var(--radius);overflow:hidden;
+}
+.result-card:hover{transform:scale(1.04) translateY(-4px);}
+.result-card:hover .result-overlay{opacity:1;}
+.result-poster{
+  width:100%;aspect-ratio:2/3;object-fit:cover;
+  background:var(--bg3);border-radius:var(--radius);
+  border:1px solid var(--border);transition:var(--transition);
+}
+.result-card:hover .result-poster{border-color:var(--purple);}
+.result-badges{
+  position:absolute;top:8px;left:8px;
+  display:flex;gap:4px;flex-direction:column;align-items:flex-start;
+}
+.result-badge{
+  padding:2px 7px;border-radius:4px;
+  font-size:10px;font-weight:700;
+}
+.rb-hd{background:rgba(124,58,237,0.8);color:white;}
+.rb-rating{background:rgba(0,0,0,0.7);color:var(--gold);display:flex;align-items:center;gap:3px;backdrop-filter:blur(4px);}
+.result-overlay{
+  position:absolute;inset:0;border-radius:var(--radius);
+  background:linear-gradient(to top,rgba(5,5,8,0.95) 0%,rgba(5,5,8,0.4) 50%,transparent 100%);
+  opacity:0;transition:var(--transition);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:12px;
+}
+.result-play{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--purple);display:flex;align-items:center;justify-content:center;
+  margin:0 auto 8px;
+}
+.result-title{font-size:12px;font-weight:600;text-align:center;margin-bottom:2px;}
+.result-year{font-size:11px;color:var(--text2);text-align:center;}
+
+/* SKELETON */
+.skeleton{
+  background:linear-gradient(90deg,var(--bg3) 25%,var(--bg2) 50%,var(--bg3) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius);
+}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* LOAD MORE */
+.load-more-wrap{text-align:center;margin-top:32px;}
+.btn-load-more{
+  padding:14px 40px;border-radius:var(--radius2);
+  font-size:15px;font-weight:600;
+  background:var(--glass2);border:1px solid var(--border);
+  color:var(--text2);transition:var(--transition);
+}
+.btn-load-more:hover{background:var(--purple);border-color:var(--purple);color:white;}
+
+/* EMPTY STATE */
+.empty-state{
+  text-align:center;padding:80px 20px;
+  color:var(--text2);
+}
+.empty-state h3{font-size:24px;margin-bottom:8px;color:var(--text);}
+.empty-state p{font-size:15px;}
+
+@media(max-width:768px){
+  .results-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+  .filters-bar{padding:0 16px 24px;}
+  .results-section{padding:0 16px 40px;}
+}
+@media(max-width:480px){
+  .results-grid{grid-template-columns:repeat(3,1fr);}
+}
+</style>
 </head>
 <body>
-    <header class="header">
-        <a href="index.html" class="logo">CineStream</a>
-        <input type="text" id="searchQuery" placeholder="Search..." style="flex:1; max-width:300px;">
-    </header>
-    <div class="filter-bar">
-        <select id="typeFilter"><option value="multi">All</option><option value="movie">Movies</option><option value="tv">TV</option></select>
-        <select id="genreFilter"><option value="">All Genres</option></select>
-        <input type="number" id="yearFilter" placeholder="Year" style="width:80px;">
-        <select id="sortFilter"><option value="popularity.desc">Popularity</option><option value="vote_average.desc">Rating</option><option value="release_date.desc">Release Date</option></select>
-    </div>
-    <div class="grid" id="resultsGrid"></div>
-    <div class="load-more" id="loadMoreBtn" style="display:none;"><button class="btn" onclick="loadMore()">Load More</button></div>
 
-    <script>
-        (function() {
-            const TMDB_API_KEY = "e10da2e2cbb23ea7ebfb64c3a188b64a";
-            const TMDB_BASE = "https://api.themoviedb.org/3";
-            const IMG = "https://image.tmdb.org/t/p/w342";
-            let currentPage = 1;
-            let totalPages = 1;
+<header id="header">
+  <a href="index.html" class="header-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Home
+  </a>
+  <div class="header-spacer"></div>
+  <a href="index.html" class="header-logo">StreamVault</a>
+</header>
 
-            async function fetchTMDB(endpoint, params) {
-                const url = new URL(`${TMDB_BASE}${endpoint}`);
-                url.searchParams.set('api_key', TMDB_API_KEY);
-                Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
-                const res = await fetch(url);
-                return res.ok ? res.json() : null;
-            }
+<div class="search-hero">
+  <h1>Discover Content</h1>
+  <p>Search millions of movies and TV shows</p>
+  <div class="search-bar-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="main-search-input" placeholder="Search movies, TV shows..." autocomplete="off">
+    <button class="search-clear" id="search-clear-btn" onclick="clearSearch()" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
 
-            async function search(page=1) {
-                const query = document.getElementById('searchQuery').value.trim();
-                const type = document.getElementById('typeFilter').value;
-                const genre = document.getElementById('genreFilter').value;
-                const year = document.getElementById('yearFilter').value;
-                const sort = document.getElementById('sortFilter').value;
+<div class="filters-bar">
+  <div class="filter-group">
+    <span class="filter-label">Type:</span>
+    <button class="filter-btn active" data-type="all" onclick="setType('all',this)">All</button>
+    <button class="filter-btn" data-type="movie" onclick="setType('movie',this)">Movies</button>
+    <button class="filter-btn" data-type="tv" onclick="setType('tv',this)">TV Shows</button>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Sort:</span>
+    <select class="filter-select" id="sort-select" onchange="applyFilters()">
+      <option value="popularity.desc">Most Popular</option>
+      <option value="vote_average.desc">Top Rated</option>
+      <option value="release_date.desc">Newest</option>
+      <option value="vote_count.desc">Most Voted</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Genre:</span>
+    <select class="filter-select" id="genre-select" onchange="applyFilters()">
+      <option value="">All Genres</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Year:</span>
+    <select class="filter-select" id="year-select" onchange="applyFilters()">
+      <option value="">All Years</option>
+    </select>
+  </div>
+</div>
 
-                let endpoint = '/trending/all/week';
-                let params = {page};
-                if(query) {
-                    endpoint = '/search/multi';
-                    params.query = query;
-                } else if(type==='movie') endpoint = '/discover/movie';
-                else if(type==='tv') endpoint = '/discover/tv';
-                else endpoint = '/trending/all/week';
+<section class="results-section">
+  <div class="results-header">
+    <div class="results-count" id="results-count">Loading…</div>
+  </div>
+  <div class="results-grid" id="results-grid"></div>
+  <div class="load-more-wrap" id="load-more-wrap" style="display:none">
+    <button class="btn-load-more" onclick="loadMore()">Load More</button>
+  </div>
+</section>
 
-                if(genre) params.with_genres = genre;
-                if(year) params.year = year;
-                if(sort) params.sort_by = sort;
+<script>
+const TMDB_KEY="e10da2e2cbb23ea7ebfb64c3a188b64a";
+const TMDB_BASE="https://api.themoviedb.org/3";
+const IMG_BASE="https://image.tmdb.org/t/p/";
 
-                const data = await fetchTMDB(endpoint, params);
-                if(!data) return;
-                totalPages = data.total_pages;
-                const results = data.results.filter(r=>r.poster_path);
-                const grid = document.getElementById('resultsGrid');
-                if(page===1) grid.innerHTML = '';
-                results.forEach(item=>{
-                    const title = item.title || item.name;
-                    const type = item.media_type || (item.title?'movie':'tv');
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `<img src="${IMG}${item.poster_path}" alt="${title}"><div class="title">${title}</div>`;
-                    card.onclick = ()=> window.location = `movie.html?id=${item.id}&type=${type}`;
-                    grid.appendChild(card);
-                });
-                document.getElementById('loadMoreBtn').style.display = page < totalPages ? 'block' : 'none';
-            }
+let currentType='all',currentPage=1,totalPages=1,isLoading=false,searchQuery='',searchTimer=null;
+const urlParams=new URLSearchParams(window.location.search);
 
-            window.loadMore = function() {
-                currentPage++;
-                search(currentPage);
-            };
+async function tmdbFetch(endpoint,retries=3){
+  for(let i=0;i<retries;i++){
+    try{
+      const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);
+      const res=await fetch(`${TMDB_BASE}${endpoint}&api_key=${TMDB_KEY}`,{signal:c.signal});
+      clearTimeout(t);if(!res.ok)throw new Error();return await res.json();
+    }catch(e){if(i===retries-1)throw e;await new Promise(r=>setTimeout(r,1000*(i+1)));}
+  }
+}
+function imgUrl(p,s='w342'){return p?`${IMG_BASE}${s}${p}`:'https://via.placeholder.com/160x240/0f0f1a/7c3aed?text=?';}
+function getRating(r){return r?r.toFixed(1):'N/A';}
+function getYear(d){return d?d.slice(0,4):'';}
+function truncate(s,n){return s&&s.length>n?s.slice(0,n)+'…':(s||'');}
 
-            document.getElementById('searchQuery').addEventListener('input', ()=>{
-                currentPage=1; search(1);
-            });
-            document.getElementById('typeFilter').addEventListener('change', ()=>{currentPage=1; search(1);});
-            document.getElementById('genreFilter').addEventListener('change', ()=>{currentPage=1; search(1);});
-            document.getElementById('yearFilter').addEventListener('change', ()=>{currentPage=1; search(1);});
-            document.getElementById('sortFilter').addEventListener('change', ()=>{currentPage=1; search(1);});
+function setType(type,btn){
+  currentType=type;
+  document.querySelectorAll('.filter-btn[data-type]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadGenres();
+  applyFilters();
+}
 
-            // Load genres
-            (async ()=>{
-                const movieGenres = await fetchTMDB('/genre/movie/list',{});
-                const tvGenres = await fetchTMDB('/genre/tv/list',{});
-                const genres = [...(movieGenres?.genres||[]), ...(tvGenres?.genres||[])];
-                const unique = [...new Map(genres.map(g=>[g.id,g])).values()];
-                const sel = document.getElementById('genreFilter');
-                unique.forEach(g=>{ const opt=document.createElement('option'); opt.value=g.id; opt.textContent=g.name; sel.appendChild(opt); });
-            })();
+async function loadGenres(){
+  const genre=document.getElementById('genre-select');
+  try{
+    const type=currentType==='tv'?'tv':'movie';
+    const data=await tmdbFetch(`/genre/${type}/list?`);
+    const genres=data.genres||[];
+    const cur=genre.value;
+    genre.innerHTML=`<option value="">All Genres</option>`+genres.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+    if(cur)genre.value=cur;
+  }catch{}
+}
 
-            search(1);
-        })();
-    </script>
+function populateYears(){
+  const sel=document.getElementById('year-select');
+  const cur=new Date().getFullYear();
+  let opts='<option value="">All Years</option>';
+  for(let y=cur;y>=1970;y--) opts+=`<option value="${y}">${y}</option>`;
+  sel.innerHTML=opts;
+}
+
+function applyFilters(){
+  currentPage=1;
+  document.getElementById('results-grid').innerHTML='';
+  document.getElementById('load-more-wrap').style.display='none';
+  fetchResults(false);
+}
+
+function clearSearch(){
+  document.getElementById('main-search-input').value='';
+  document.getElementById('search-clear-btn').style.display='none';
+  searchQuery='';
+  applyFilters();
+}
+
+async function fetchResults(append=false){
+  if(isLoading)return;
+  isLoading=true;
+  const grid=document.getElementById('results-grid');
+
+  if(!append){
+    grid.innerHTML=Array(12).fill(0).map(()=>`
+      <div class="skeleton" style="aspect-ratio:2/3;border-radius:12px;"></div>`).join('');
+  }
+
+  try{
+    let data;
+    const sort=document.getElementById('sort-select').value;
+    const genre=document.getElementById('genre-select').value;
+    const year=document.getElementById('year-select').value;
+    const yearParam=year?(currentType==='tv'?`&first_air_date_year=${year}`:`&primary_release_year=${year}`):'';
+    const genreParam=genre?`&with_genres=${genre}`:'';
+
+    if(searchQuery){
+      const endpoint=currentType==='tv'?'/search/tv':currentType==='movie'?'/search/movie':'/search/multi';
+      data=await tmdbFetch(`${endpoint}?query=${encodeURIComponent(searchQuery)}&page=${currentPage}&`);
+    } else {
+      if(currentType==='tv'){
+        data=await tmdbFetch(`/discover/tv?sort_by=${sort}&page=${currentPage}${genreParam}${yearParam}&`);
+      } else {
+        data=await tmdbFetch(`/discover/movie?sort_by=${sort}&page=${currentPage}${genreParam}${yearParam}&vote_count.gte=50&`);
+      }
+    }
+
+    totalPages=data.total_pages||1;
+    const results=(data.results||[]).filter(r=>r.media_type!=='person');
+    const count=data.total_results||results.length;
+
+    document.getElementById('results-count').innerHTML=`Found <span>${count.toLocaleString()}</span> results${searchQuery?` for "<span>${searchQuery}</span>"`:''}`;
+
+    if(!append) grid.innerHTML='';
+
+    if(!results.length && !append){
+      grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><h3>No results found</h3><p>Try a different search or adjust filters</p></div>`;
+      isLoading=false; return;
+    }
+
+    results.forEach(item=>{
+      const type=item.media_type||(currentType==='tv'?'tv':'movie');
+      const title=item.title||item.name||'Unknown';
+      const year_=getYear(item.release_date||item.first_air_date);
+      const rating=getRating(item.vote_average);
+      const card=document.createElement('div');
+      card.className='result-card';
+      card.onclick=()=>window.location.href=`movie.html?id=${item.id}&type=${type}`;
+      card.innerHTML=`
+        <img class="result-poster" src="${imgUrl(item.poster_path,'w342')}" alt="${title}" loading="lazy" onerror="this.src='https://via.placeholder.com/160x240/0f0f1a/7c3aed?text=?'">
+        <div class="result-badges">
+          <span class="result-badge rb-hd">HD</span>
+          <span class="result-badge rb-rating">⭐ ${rating}</span>
+        </div>
+        <div class="result-overlay">
+          <a href="watch.html?id=${item.id}&type=${type}" class="result-play" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </a>
+          <div class="result-title">${truncate(title,24)}</div>
+          <div class="result-year">${year_}</div>
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    document.getElementById('load-more-wrap').style.display=currentPage<totalPages?'block':'none';
+    currentPage++;
+  }catch(e){
+    if(!append) grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><h3>Error loading results</h3><p>Please try again</p></div>`;
+  }
+  isLoading=false;
+}
+
+function loadMore(){fetchResults(true);}
+
+// Input handler
+document.getElementById('main-search-input').addEventListener('input',e=>{
+  searchQuery=e.target.value.trim();
+  document.getElementById('search-clear-btn').style.display=searchQuery?'flex':'none';
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(()=>{currentPage=1;document.getElementById('results-grid').innerHTML='';fetchResults(false);},400);
+});
+
+// Init
+async function init(){
+  populateYears();
+  // Check URL params
+  const typeParam=urlParams.get('type');
+  if(typeParam){
+    currentType=typeParam;
+    document.querySelectorAll('.filter-btn[data-type]').forEach(b=>{
+      b.classList.toggle('active',b.dataset.type===typeParam);
+    });
+  }
+  const q=urlParams.get('q');
+  if(q){
+    searchQuery=q;
+    document.getElementById('main-search-input').value=q;
+    document.getElementById('search-clear-btn').style.display='flex';
+  }
+  await loadGenres();
+  fetchResults(false);
+}
+init();
+</script>
 </body>
 </html>
