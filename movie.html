@@ -350,7 +350,10 @@
             }catch(e){if(i===retries-1) throw e;await new Promise(r=>setTimeout(r,1000*(i+1)))}
         }
     }
-    function img(path,size='w500'){return path?`${IMG_BASE}${size}${path}`:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><rect fill="%231a1a2e" width="300" height="450"/><text fill="%23444" x="50%" y="50%" text-anchor="middle" font-size="14">No Image</text></svg>'}
+    function img(path,size='w500'){
+    if(!path) return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='450'%3E%3Crect fill='%231a1a2e' width='300' height='450'/%3E%3Ctext fill='%23444' x='50%25' y='50%25' text-anchor='middle' font-size='14'%3ENo Image%3C/text%3E%3C/svg%3E";
+    return `${IMG_BASE}${size}${path}`;
+}
     function backdrop(path){return img(path,'original')}
 
     const params=new URLSearchParams(window.location.search);
