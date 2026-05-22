@@ -1,104 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CineStream — TV Show Details</title>
-  <!-- … same meta and FULL CSS as movie.html (above) … -->
-  <style>/* Full CSS here, same as movie.html */</style>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=movie.html">
+    <title>Redirecting...</title>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        window.location.href = 'movie.html?id=' + id + '&type=tv';
+    </script>
+<base target="_blank">
 </head>
-<body>
-  <!-- … same particles, overlays, navbar (with "TV Shows" active) … -->
-  <script type="module">
-    // … same API key, tmdbFetch, createCard, and common functions …
-    async function init() {
-      const params = new URLSearchParams(window.location.search);
-      const tvId = params.get('id');
-      if (!tvId) {
-        document.getElementById('mainContent').innerHTML = '<p style="padding:40px;">TV ID missing.</p>';
-        return;
-      }
-      try {
-        const tv = await tmdbFetch(`/tv/${tvId}?append_to_response=videos,credits,recommendations`);
-        document.title = `CineStream — ${tv.name}`;
-        const main = document.getElementById('mainContent');
-        const backdrop = tv.backdrop_path ? IMG_ORIGINAL + tv.backdrop_path : '';
-        const poster = tv.poster_path ? IMG_W500 + tv.poster_path : '';
-        const genres = (tv.genres || []).map(g => g.name).join(', ');
-        const creator = (tv.created_by || []).map(c => c.name).join(', ') || 'N/A';
-        const cast = (tv.credits?.cast || []).slice(0, 10);
-        const recommendations = (tv.recommendations?.results || []).filter(r => r.poster_path).slice(0, 12);
-        const seasons = tv.seasons?.filter(s => s.season_number > 0) || [];
-        let trailerKey = '';
-        if (tv.videos?.results) {
-          const trailer = tv.videos.results.find(v => v.site==='YouTube' && (v.type==='Trailer'||v.type==='Teaser'));
-          if (trailer) trailerKey = trailer.key;
-        }
-        main.innerHTML = `
-          <div class="detail-hero">
-            <img class="detail-backdrop" src="${backdrop}" onerror="this.style.display='none'">
-            <div class="detail-gradient"></div>
-            <div class="detail-content">
-              <img class="detail-poster" src="${poster}" alt="${tv.name}" onerror="this.style.background='var(--bg-tertiary)'">
-              <div class="detail-info">
-                <h1>${tv.name}</h1>
-                ${tv.tagline ? `<p class="tagline">${tv.tagline}</p>` : ''}
-                <p style="color:var(--text-secondary); margin-bottom:12px;">${tv.overview || 'No overview.'}</p>
-                <div class="detail-meta">
-                  ${tv.first_air_date ? `<span class="badge">📅 ${tv.first_air_date}</span>` : ''}
-                  ${tv.number_of_seasons ? `<span class="badge">📺 ${tv.number_of_seasons} Seasons</span>` : ''}
-                  <span class="badge">⭐ ${tv.vote_average?.toFixed(1)}</span>
-                  ${genres ? `<span class="badge">${genres}</span>` : ''}
-                </div>
-                <p><strong>Created by:</strong> ${creator}</p>
-                <div style="margin-top:16px;">
-                  <a href="watch.html?id=${tv.id}&type=tv&season=1&episode=1&server=vidplus" class="btn btn-primary">▶ Watch S1 E1</a>
-                  ${trailerKey ? `<button class="btn btn-secondary" id="playTrailerBtn" data-trailer="${trailerKey}">🎞 Trailer</button>` : ''}
-                </div>
-                ${cast.length ? `<div class="cast-list" style="margin-top:16px;"><h3 style="width:100%;">Cast</h3>${cast.map(c => `<div class="cast-item"><img src="${c.profile_path ? IMG_W185+c.profile_path : 'data:image/svg+xml,...'}" alt="${c.name}"><div class="name">${c.name}</div></div>`).join('')}</div>` : ''}
-              </div>
-            </div>
-          </div>
-          ${seasons.length ? `
-          <section class="section">
-            <div class="section-header"><h2 class="section-title"><span class="icon-dot"></span> Seasons</h2></div>
-            <div class="card-scroll" id="seasonsScroll"></div>
-          </section>` : ''}
-          ${recommendations.length ? `
-          <section class="section">
-            <div class="section-header"><h2 class="section-title"><span class="icon-dot"></span> Recommendations</h2></div>
-            <div class="card-scroll" id="recommendationsScroll"></div>
-          </section>` : ''}
-        `;
-        if (seasons.length) {
-          const seasonsScroll = document.getElementById('seasonsScroll');
-          seasons.forEach(season => {
-            const card = document.createElement('a');
-            card.className = 'card';
-            card.href = `watch.html?id=${tv.id}&type=tv&season=${season.season_number}&episode=1&server=vidplus`;
-            card.innerHTML = `<img class="card-poster" src="${season.poster_path ? IMG_W342+season.poster_path : poster}" alt="Season ${season.season_number}"><div class="card-info"><div class="card-title">Season ${season.season_number}</div><div class="card-meta">${season.episode_count || '?'} Episodes</div></div>`;
-            seasonsScroll.appendChild(card);
-          });
-        }
-        if (recommendations.length) {
-          const recScroll = document.getElementById('recommendationsScroll');
-          recommendations.forEach(r => recScroll.appendChild(createCard(r, 'tv')));
-        }
-        if (trailerKey) {
-          document.getElementById('playTrailerBtn')?.addEventListener('click', () => {
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:4000;border:none;';
-            iframe.src = `https://www.youtube.com/embed/${trailerKey}?autoplay=1`;
-            document.body.appendChild(iframe);
-            iframe.addEventListener('click', () => iframe.remove());
-          });
-        }
-      } catch (err) {
-        console.error(err);
-        document.getElementById('mainContent').innerHTML = '<p style="padding:40px;color:var(--muted);">Failed to load TV details.</p>';
-      }
-    }
-    // … same common scripts (hamburger, search, particles) as movie.html …
-  </script>
+<body style="background:#050505;color:#94a3b8;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
+    <p>Redirecting to TV Show details...</p>
 </body>
 </html>
